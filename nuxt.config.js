@@ -3,22 +3,19 @@ const pkg = require('./package')
 module.exports = {
   mode: 'spa',
 
-  server: {
-    port: 3030
-  },
-
   /*
   ** Headers of the page
   */
   head: {
-    title: pkg.name,
+    title: 'UNO the game online',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: pkg.description }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/vnd.microsoft.icon', size: '16x16 32x32 48x48 64x64', href: '/favicon.png' },
+      { rel: 'stylesheet', type: 'text/css', href: 'https://fonts.googleapis.com/css?family=Fugaz+One' }
     ]
   },
 
@@ -28,21 +25,27 @@ module.exports = {
   loading: { color: '#C81F45' },
 
   /*
+  ** Nuxt.js modules
+  */
+  modules: [
+    '@nuxtjs/style-resources'
+  ],
+
+  styleResources: {
+    scss: '@/assets/scss/variables/_index.scss'
+  },
+
+  /*
   ** Global CSS
   */
   css: [
+    '@/assets/scss/main.scss'
   ],
 
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
-  ],
-
-  /*
-  ** Nuxt.js modules
-  */
-  modules: [
   ],
 
   /*

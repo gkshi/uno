@@ -1,0 +1,20 @@
+// base
+@import 'base/reset';
+
+// variables
+@import 'variables/index';
+@import 'utils';
+
+// main styles
+body {
+  font-family: $font-family-default;
+  font-size: $font-size-default;
+  line-height: $line-height-default;
+  font-weight: $font-weight-normal;
+  background: $color-dark;
+  color: $color-light;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -moz-font-feature-settings: "liga" on;
+}
