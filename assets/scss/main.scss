@@ -18,3 +18,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   -moz-font-feature-settings: "liga" on;
 }
+
+a {
+  color: $color-light;
+  text-decoration: underline;
+  &:hover {
+    text-decoration: none;
+  }
+}
