@@ -5,16 +5,16 @@
         .cell.left
           div card stack
         .cell.flex.j-center.middle
-          div player 3
+          player(name="player 3")
         .cell.flex.j-end.right
           div menu
       .row.flex.middle
         .cell.flex.a-center.left
-          div player 2
+          player(name="player 2")
         .cell.flex.center.middle
           div game table
         .cell.flex.j-end.a-center.right
-          div player 4
+          player(name="player 4")
       .row.flex.bottom
         .cell.flex.a-end.left
           div logs
@@ -32,11 +32,13 @@
 
 <script>
 import card from '@/components/card'
+import player from '@/components/player'
 
 export default {
   name: 'index-page',
   components: {
-    card
+    card,
+    player
   }
 }
 </script>
