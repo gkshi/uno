@@ -75,7 +75,7 @@ export default {
   },
   mounted () {
     // setInterval(() => {
-    //   this.rotated = !this.rotated
+    //   this.hidden = !this.hidden
     // }, 2000)
   }
 }
