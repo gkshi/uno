@@ -2,6 +2,7 @@
   div
     loader(:ready="ready")
     nuxt
+    .bg
 </template>
 
 <script>
@@ -21,3 +22,16 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  .bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: url('/bg.png') no-repeat center;
+    background-size: cover;
+  }
+</style>

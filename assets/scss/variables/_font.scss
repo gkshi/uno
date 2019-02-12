@@ -1,4 +1,12 @@
 $font-family-default: Tahoma, Arial, sans-serif;
+$font-family-numberic: 'Fugaz One', $font-family-default;
+
 $font-size-default: 16px;
+$font-size-number: 20px;
+$font-size-number-large: 50px;
+
 $line-height-default: 24px;
+$line-height-number: $font-size-number;
+$line-height-number-large: $font-size-number-large;
+
 $font-weight-normal: 400;
