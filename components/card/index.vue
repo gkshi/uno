@@ -64,14 +64,6 @@ export default {
       return classList
     }
   },
-  methods: {
-    isSmallSignNumber () {
-      return true
-    },
-    isSignNumber () {
-      return true
-    }
-  },
   created () {
     if (this.value) {
       this.sign = this.value
@@ -90,9 +82,7 @@ export default {
     }
   },
   mounted () {
-    // setInterval(() => {
-    //   this.hidden = !this.hidden
-    // }, 2000)
+    console.log('mo')
   }
 }
 </script>

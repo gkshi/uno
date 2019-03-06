@@ -25,7 +25,7 @@ export default {
 
 <style lang="scss" scoped>
   .bg {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;

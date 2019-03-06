@@ -5,16 +5,18 @@
         .cell.left
           div card stack
         .cell.flex.j-center.middle
-          player(name="player 3")
+          player(:data="players[0]")
         .cell.flex.j-end.right
           div menu
       .row.flex.middle
         .cell.flex.a-center.left
-          player(name="player 2")
+          player(:data="players[1]")
         .cell.flex.center.middle
-          div game table
+          div
+            span game table&nbsp;
+            nuxt-link(to="/generator") gen
         .cell.flex.j-end.a-center.right
-          player(name="player 4")
+          player(:data="players[2]")
       .row.flex.bottom
         .cell.flex.a-end.left
           div logs
@@ -31,6 +33,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import card from '@/components/card'
 import player from '@/components/player'
 
@@ -39,6 +42,11 @@ export default {
   components: {
     card,
     player
+  },
+  computed: {
+    ...mapState({
+      players: state => state.players
+    })
   }
 }
 </script>
@@ -47,6 +55,7 @@ export default {
 $padding: 3%;
 .index {
   height: 100vh;
+  min-height: 700px;
   .table {
     height: 100%;
     .row {
