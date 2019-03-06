@@ -84,7 +84,7 @@ export default {
       height: 40px;
     }
     &.small {
-      svg {
+      svg, img {
         width: 18px;
         height: 18px;
       }
@@ -102,7 +102,7 @@ export default {
       }
     }
     &.wild:not(.small) {
-      svg {
+      img {
         width: 100%;
         height: auto;
       }

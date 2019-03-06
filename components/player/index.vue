@@ -2,7 +2,7 @@
   .player-component.flex
     .info
       .photo photo
-      .label.name {{ name }}
+      .label.name {{ data.name }}
     .hand
       .cards.flex
         card.card(:hidden="true" size="small" color="blue" value="4")
@@ -21,9 +21,9 @@ export default {
     card
   },
   props: {
-    name: {
-      type: String,
-      default: 'player'
+    data: {
+      type: Object,
+      default: () => {}
     }
   },
   data () {
@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     cardsCount () {
-      return this.cards.length
+      return this.data.cards.length
     }
   }
 }
@@ -58,6 +58,7 @@ export default {
       color: $color-dark;
       border-radius: 4px;
       text-align: center;
+      padding: 0 8px;
     }
     .count {
       margin-top: $margin;
