@@ -80,9 +80,6 @@ export default {
           break
       }
     }
-  },
-  mounted () {
-    console.log('mo')
   }
 }
 </script>
