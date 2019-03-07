@@ -6,13 +6,16 @@
       a(href="#" @click.prevent="createDeck") create
       | &nbsp;
       a(href="#" @click.prevent="shuffleDeck") shuffle
-    .cards.flex
-      card(
+      | &nbsp;
+      a(href="#" @click.prevent="fitDeck($refs.hand)") fit
+    .cards.flex(ref="hand")
+      card.card(
         v-for="card in stack"
         :color="card.color"
         :type="card.type"
         :value="card.value"
         size="small"
+        :hidden="false"
         :key="card.id")
 </template>
 
@@ -32,6 +35,28 @@ export default {
     }
   },
   methods: {
+    fitDeck (hand) {
+      const margin = 6
+      hand.style.minHeight = `${hand.children[0].offsetHeight}px`
+      if (getComputedStyle(hand).getPropertyValue('position') !== 'absolute') {
+        hand.style.position = 'relative'
+      }
+      let handWidth = hand.offsetWidth
+      let step = (handWidth - hand.children[0].offsetWidth) / (hand.children.length - 1)
+      for (let i = 0; i < hand.children.length; i++) {
+        let card = hand.children[i]
+        card.style.position = 'absolute'
+        if (step < margin) {
+          if ((margin * i) >= (handWidth - card.offsetWidth)) {
+            card.style.left = `${handWidth - card.offsetWidth}px`
+          } else {
+            card.style.left = `${margin * i}px`
+          }
+        } else {
+          card.style.left = `${step * i}px`
+        }
+      }
+    },
     shuffleDeck () {
       let array = JSON.parse(JSON.stringify(this.stack))
       let currentIndex = array.length
@@ -99,6 +124,14 @@ export default {
     .cards {
       margin-top: 40px;
       flex-wrap: wrap;
+      /*width: 240px;*/
+      /*background: rgba(204, 204, 204, 0.62);*/
+      .card {
+        margin-right: 10px;
+        &:last-child {
+          margin-right: 0;
+        }
+      }
     }
   }
 </style>
