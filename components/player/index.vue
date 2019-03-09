@@ -4,7 +4,7 @@
       .photo photo
       .label.name {{ data.name }}
     .hand
-      .cards.flex
+      .game.flex
         card.card(:hidden="true" size="small" color="blue" value="4")
         card.card(:hidden="true" size="small" color="blue" value="4")
         card.card(:hidden="true" size="small" color="blue" value="4")
@@ -28,7 +28,7 @@ export default {
   },
   data () {
     return {
-      cards: []
+      game: []
     }
   },
   computed: {
@@ -53,17 +53,10 @@ export default {
       margin-bottom: $margin;
       border-radius: 4px;
     }
-    .label {
-      background: $color-light;
-      color: $color-dark;
-      border-radius: 4px;
-      text-align: center;
-      padding: 0 8px;
-    }
     .count {
       margin-top: $margin;
     }
-    .cards {
+    .game {
       .card {
         margin-right: 6px;
         &:last-child {
