@@ -4,7 +4,7 @@
       .row.flex.top
         .cell.left
           .flex.a-end
-            .deck.flex(ref="hand" :class="deckClass")
+            .deck.flex(ref="deck" :class="deckClass")
               card(
               v-for="card in deck"
               :color="card.color"
@@ -13,19 +13,21 @@
               size="small"
               :hidden="true"
               :key="card.id")
-            .label {{ cardsInDeck }}
+            .label(v-if="cardsInDeck") {{ cardsInDeck }}
         .cell.flex.j-center.middle
-          player(:data="players[0]")
+          player(id="0" :data="players[0]")
         .cell.flex.j-end.right
           div menu
       .row.flex.middle
         .cell.flex.a-center.left
-          player(:data="players[1]")
+          player(id="3" :data="players[3]")
         .cell.flex.center.middle
           div
             a(href="#" @click.prevent="initDeck") start
+            span &nbsp;
+            a(href="#" @click.prevent="dealCards") deal cards
         .cell.flex.j-end.a-center.right
-          player(:data="players[2]")
+          player(id="1" :data="players[1]")
       .row.flex.bottom
         .cell.flex.a-end.left
           div logs
@@ -72,16 +74,15 @@ export default {
   methods: {
     initDeck () {
       this.$store.dispatch('createDeck').then(() => {
-        this.fitDeck()
+        this.fitDeck(this.$refs.deck)
       })
     },
-    fitDeck () {
-      const hand = this.$refs.hand
+    fitDeck (hand) {
+      if (!hand) {
+        return
+      }
       const offset = 6
       const margin = 10
-      console.log(hand)
-      console.log(hand.children, hand.children.length)
-      console.log(hand.children[0])
       const handWidth = hand.offsetWidth
       const cardWidth = hand.children[0].offsetWidth
 
@@ -115,6 +116,17 @@ export default {
       setTimeout(() => {
         this.isDeckHidden = false
       }, 10)
+    },
+    dealCards () {
+      // let players = []
+      // for (let i = 0; i < this.players.length; i++) {
+      //   console.log('i')
+      // }
+      this.dealCard()
+    },
+    dealCard () {
+      this.$store.dispatch('dealCard')
+      // console.log('deal card', card, 'to player', player)
     }
   }
 }

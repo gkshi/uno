@@ -1,15 +1,22 @@
 <template lang="pug">
   .player-component.flex
     .info
-      .photo photo
+      .photo
+        img(:src="data.photo")
       .label.name {{ data.name }}
     .hand
-      .game.flex
-        card.card(:hidden="true" size="small" color="blue" value="4")
-        card.card(:hidden="true" size="small" color="blue" value="4")
-        card.card(:hidden="true" size="small" color="blue" value="4")
-      .flex
-        .label.count {{ cardsCount }}
+      .cards.flex(:ref="`hand_${id}`")
+        card.card(
+          v-for="card in data.cards"
+          :hidden="true"
+          size="small"
+          type="card.type"
+          color="card.color"
+          value="card.value"
+          :key="card.id")
+      .flex(v-if="cardsCount")
+        .label.count(v-if="cardsCount > 1") {{ cardsCount }}
+        .label.count(v-else) UNO!
 </template>
 
 <script>
@@ -21,14 +28,10 @@ export default {
     card
   },
   props: {
+    id: [Number, String],
     data: {
       type: Object,
       default: () => {}
-    }
-  },
-  data () {
-    return {
-      game: []
     }
   },
   computed: {
@@ -52,11 +55,22 @@ export default {
       color: $color-dark;
       margin-bottom: $margin;
       border-radius: 4px;
+      border: 4px solid $color-light;
+      img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        border-radius: 2px;
+      }
     }
     .count {
       margin-top: $margin;
     }
-    .game {
+    .cards {
+      width: 230px;
+      height: 100px;
       .card {
         margin-right: 6px;
         &:last-child {

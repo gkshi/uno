@@ -3,18 +3,41 @@ import game from '@/config/game'
 export const state = () => ({
   players: [
     {
-      name: 'Player 2',
-      cards: []
+      id: 'bot1',
+      type: 'bot',
+      name: 'Jack',
+      photo: '/users/jack.png',
+      cards: [],
+      el: null
     },
     {
-      name: 'Player 3',
-      cards: []
+      id: 'bot2',
+      type: 'bot',
+      name: 'Sasha',
+      photo: '/users/sasha.png',
+      cards: [],
+      el: null
     },
     {
-      name: 'Player 4',
-      cards: []
+      id: 'user',
+      type: 'user',
+      cards: [],
+      el: null
+    },
+    {
+      id: 'bot3',
+      type: 'bot',
+      name: 'Mary',
+      photo: '/users/mary.png',
+      cards: [],
+      el: null
     }
   ],
+  game: {
+    status: 'ready',
+    player: null,
+    turn: 0
+  },
   deck: []
 })
 
@@ -54,9 +77,7 @@ export const actions = {
           }
         })
       })
-      console.log('create, 1', this.state.deck)
       commit('DECK_UPDATE', generated)
-      console.log('create, 2', this.state.deck)
       setTimeout(() => {
         resolve()
       }, 0)
@@ -86,20 +107,25 @@ export const actions = {
         resolve()
       }, 0)
     })
+  },
+
+  dealCard ({ commit }) {
+    console.log('deal card action')
   }
 
 }
 
 export const mutations = {
   DECK_UPDATE (state, cards) {
-    console.log('mutation, 1', state.deck)
     state.deck = cards
-    console.log('mutation, 2', state.deck)
   }
 }
 
 export const getters = {
-  cardsInDeck: (state) => {
+  cardsInDeck: state => {
     return state.deck.length
+  },
+  player: state => id => {
+    return state.players.find(player => player.id === id)
   }
 }
