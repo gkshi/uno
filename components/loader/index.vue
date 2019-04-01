@@ -1,6 +1,6 @@
 <template lang="pug">
   transition(name="loader")
-    .loader-conponent.flex.center(v-if="show")
+    .loader-component.flex.center(v-if="show")
       transition(name="logo")
         logo.logo(v-if="showLogo")
 </template>
@@ -9,7 +9,7 @@
 import logo from '@/components/logo'
 
 export default {
-  name: 'loader-conponent',
+  name: 'loader-component',
   components: {
     logo
   },
@@ -20,7 +20,8 @@ export default {
     },
     min: {
       type: Number,
-      default: 3000
+      // default: 3000
+      default: 2000
     }
   },
   data () {
@@ -53,7 +54,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .loader-conponent {
+  .loader-component {
     position: fixed;
     top: 0;
     left: 0;

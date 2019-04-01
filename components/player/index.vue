@@ -5,7 +5,7 @@
         img(:src="data.photo")
       .label.name {{ data.name }}
     .hand
-      .cards.flex(:ref="`hand_${id}`")
+      .cards.flex(ref="hand")
         card.card(
           v-for="card in data.cards"
           :hidden="true"
@@ -28,7 +28,6 @@ export default {
     card
   },
   props: {
-    id: [Number, String],
     data: {
       type: Object,
       default: () => {}
@@ -38,6 +37,13 @@ export default {
     cardsCount () {
       return this.data.cards.length
     }
+  },
+  mounted () {
+    this.$store.dispatch('setEl', {
+      player: this.data.id,
+      el: this.$refs.hand
+    })
+    // this.$parent.$on('fitDeck', ref => this.fitHand(ref))
   }
 }
 </script>

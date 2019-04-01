@@ -15,44 +15,47 @@
               :key="card.id")
             .label(v-if="cardsInDeck") {{ cardsInDeck }}
         .cell.flex.j-center.middle
-          player(id="0" :data="players[0]")
+          player(:data="players.bot1")
         .cell.flex.j-end.right
           div menu
       .row.flex.middle
         .cell.flex.a-center.left
-          player(id="3" :data="players[3]")
+          player(:data="players.bot3")
         .cell.flex.center.middle
           div
             a(href="#" @click.prevent="initDeck") start
             span &nbsp;
-            a(href="#" @click.prevent="dealCards") deal cards
+            a(href="#" @click.prevent="dealFirstHands") deal cards
         .cell.flex.j-end.a-center.right
-          player(id="1" :data="players[1]")
+          player(:data="players.bot2")
       .row.flex.bottom
         .cell.flex.a-end.left
-          div logs
+          logs
         .cell.flex.a-end.middle
-          .game.flex
-            card(color="black" type="wild_draw_four")
-            card(color="black" type="wild")
-            card(color="yellow" type="draw_two")
-            card(color="red" type="skip")
-            card(color="green" type="reverse")
-            card(color="blue" value="4")
+          .user-hand.cards.flex(ref="hand")
+            card.card(
+              v-for="card in user.cards"
+              :type="card.type"
+              :color="card.color"
+              :value="card.value"
+              :key="card.id")
         .cell.flex.a-center.right
           div uno
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex'
+import logMessages from '@/constants/logs'
 import card from '@/components/card'
 import player from '@/components/player'
+import logs from '@/components/logs'
 
 export default {
   name: 'index-page',
   components: {
     card,
-    player
+    player,
+    logs
   },
   data () {
     return {
@@ -62,10 +65,12 @@ export default {
   computed: {
     ...mapState({
       players: state => state.players,
-      deck: state => state.deck
+      deck: state => state.deck,
+      logs: state => state.logs
     }),
     ...mapGetters({
-      cardsInDeck: 'cardsInDeck'
+      cardsInDeck: 'cardsInDeck',
+      user: 'user'
     }),
     deckClass () {
       return this.isDeckHidden ? 'hidden' : ''
@@ -117,17 +122,33 @@ export default {
         this.isDeckHidden = false
       }, 10)
     },
-    dealCards () {
-      // let players = []
-      // for (let i = 0; i < this.players.length; i++) {
-      //   console.log('i')
-      // }
-      this.dealCard()
+    dealFirstHands () {
+      Object.keys(this.players).forEach(key => {
+        return new Promise((resolve, reject) => {
+          for (let j = 0; j < 7; j++) {
+            this.dealCard(this.players[key].id)
+          }
+          resolve()
+        }).then(() => {
+          setTimeout(() => {
+            this.fitDeck(this.players[key].el)
+          }, 100)
+        })
+      })
+      this.fitDeck(this.$refs.deck)
+      this.$store.dispatch('log', logMessages.handsDealed)
     },
-    dealCard () {
-      this.$store.dispatch('dealCard')
-      // console.log('deal card', card, 'to player', player)
+    dealCard (player) {
+      this.$store.dispatch('dealCard', player)
     }
+  },
+  mounted () {
+    this.$store.dispatch('setEl', {
+      player: 'user',
+      el: this.$refs.hand
+    }).then(() => {
+      this.initDeck()
+    })
   }
 }
 </script>
@@ -139,6 +160,7 @@ $padding: 3%;
   min-height: 700px;
   .table {
     height: 100%;
+    overflow: hidden;
     .row {
       &.top {
         height: 29%;
@@ -179,6 +201,9 @@ $padding: 3%;
     & > * {
       margin: 0 5px;
     }
+  }
+  .user-hand {
+    width: 100%;
   }
 }
 </style>
