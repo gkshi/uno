@@ -45,6 +45,17 @@ export const state = () => ({
 
 export const actions = {
 
+  restart ({ commit, dispatch }) {
+    return new Promise((resolve, reject) => {
+      commit('RESTART')
+      resolve()
+    }).then(() => {
+      setTimeout(() => {
+        dispatch('createDeck')
+      }, 0)
+    })
+  },
+
   createDeck ({ commit, dispatch }) {
     commit('LOG_CLEAR')
     return new Promise((resolve, reject) => {
@@ -147,6 +158,13 @@ export const mutations = {
     const card = state.deck[state.deck.length - 1]
     player.cards.push(card)
     state.deck.pop()
+  },
+
+  RESTART (state) {
+    state.deck = []
+    Object.keys(state.players).forEach(key => {
+      state.players[key].cards = []
+    })
   },
 
   PLAYER_SET_EL (state, payload) {

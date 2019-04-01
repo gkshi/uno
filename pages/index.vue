@@ -17,30 +17,24 @@
         .cell.flex.j-center.middle
           player(:data="players.bot1")
         .cell.flex.j-end.right
-          div menu
+          div
+            a(href="#" @click.prevent="restart") restart
+            span &nbsp;
+            a(href="#" @click.prevent="dealFirstHands") deal cards
       .row.flex.middle
         .cell.flex.a-center.left
           player(:data="players.bot3")
         .cell.flex.center.middle
-          div
-            a(href="#" @click.prevent="initDeck") start
-            span &nbsp;
-            a(href="#" @click.prevent="dealFirstHands") deal cards
+          //- div table
         .cell.flex.j-end.a-center.right
           player(:data="players.bot2")
       .row.flex.bottom
         .cell.flex.a-end.left
           logs
         .cell.flex.a-end.middle
-          .user-hand.cards.flex(ref="hand")
-            card.card(
-              v-for="card in user.cards"
-              :type="card.type"
-              :color="card.color"
-              :value="card.value"
-              :key="card.id")
+          user
         .cell.flex.a-center.right
-          div uno
+          vButton uno
 </template>
 
 <script>
@@ -48,14 +42,18 @@ import { mapState, mapGetters } from 'vuex'
 import logMessages from '@/constants/logs'
 import card from '@/components/card'
 import player from '@/components/player'
+import user from '@/components/user'
 import logs from '@/components/logs'
+import vButton from '@/components/button'
 
 export default {
   name: 'index-page',
   components: {
     card,
     player,
-    logs
+    user,
+    logs,
+    vButton
   },
   data () {
     return {
@@ -69,14 +67,20 @@ export default {
       logs: state => state.logs
     }),
     ...mapGetters({
-      cardsInDeck: 'cardsInDeck',
-      user: 'user'
+      cardsInDeck: 'cardsInDeck'
     }),
     deckClass () {
       return this.isDeckHidden ? 'hidden' : ''
     }
   },
   methods: {
+    restart () {
+      this.$store.dispatch('restart').then(() => {
+        setTimeout(() => {
+          this.fitDeck(this.$refs.deck)
+        }, 100)
+      })
+    },
     initDeck () {
       this.$store.dispatch('createDeck').then(() => {
         this.fitDeck(this.$refs.deck)
@@ -143,12 +147,7 @@ export default {
     }
   },
   mounted () {
-    this.$store.dispatch('setEl', {
-      player: 'user',
-      el: this.$refs.hand
-    }).then(() => {
-      this.initDeck()
-    })
+    this.initDeck()
   }
 }
 </script>
@@ -193,6 +192,7 @@ $padding: 3%;
     max-width: 240px;
     min-height: 100px;
     margin-right: 10px;
+    overflow: hidden;
     &.hidden {
       opacity: 0;
     }
@@ -201,9 +201,6 @@ $padding: 3%;
     & > * {
       margin: 0 5px;
     }
-  }
-  .user-hand {
-    width: 100%;
   }
 }
 </style>

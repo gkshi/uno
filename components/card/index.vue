@@ -1,6 +1,6 @@
 <template lang="pug">
-  .card-component(:class="classList")
-    .card(:class="color")
+  .card-component(:class="classList" @mouseenter="enter" @mouseleave="leave")
+    .card(:class="cardClass")
       .front
         .content.flex.center
           .top
@@ -47,12 +47,14 @@ export default {
     size: {
       type: String,
       default: 'default'
-    }
+    },
+    interactive: Boolean
   },
   data () {
     return {
       sign: null,
-      smallSign: null
+      smallSign: null,
+      isHover: false
     }
   },
   computed: {
@@ -61,7 +63,29 @@ export default {
       if (this.hidden) {
         classList += ' hidden'
       }
+      if (this.isHover) {
+        classList += ' hover'
+      }
       return classList
+    },
+    cardClass () {
+      let classList = this.color
+      if (this.interactive) {
+        classList += ' interactive'
+      }
+      return classList
+    }
+  },
+  methods: {
+    enter () {
+      if (this.interactive) {
+        this.isHover = true
+      }
+    },
+    leave () {
+      if (this.interactive) {
+        this.isHover = false
+      }
     }
   },
   created () {
@@ -88,6 +112,7 @@ export default {
 .card-component {
   perspective: 500px;
   user-select: none;
+  transition: $transition-card-parent;
   .card {
     position: relative;
     width: 106px;
@@ -136,6 +161,9 @@ export default {
           }
         }
       }
+    }
+    &.interactive {
+      cursor: pointer;
     }
   }
   .front,
@@ -222,6 +250,11 @@ export default {
     transform: scale(0.62) translate(-30%, -30%);
     width: 66px;
     height: 100px;
+  }
+
+  &.hover {
+    transform: translate(0, -14px);
+    /*z-index: 1;*/
   }
 }
 </style>

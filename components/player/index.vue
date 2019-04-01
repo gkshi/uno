@@ -77,6 +77,7 @@ export default {
     .cards {
       width: 230px;
       height: 100px;
+      overflow: hidden;
       .card {
         margin-right: 6px;
         &:last-child {
