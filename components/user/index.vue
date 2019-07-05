@@ -7,15 +7,18 @@
         :color="card.color"
         :value="card.value"
         :key="card.id"
-        interactive)
+        interactive
+        @click="makeMove(card.id)")
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
+import mixinDeck from '@/mixins/deck'
 import card from '@/components/card'
 
 export default {
   name: 'user-component',
+  mixins: [mixinDeck],
   components: {
     card
   },
@@ -24,11 +27,22 @@ export default {
       user: 'user'
     })
   },
+  methods: {
+    makeMove (cardId) {
+      this.$store.dispatch('makeMove', {
+        cardId,
+        player: 'user'
+      })
+    }
+  },
   mounted () {
     this.$store.dispatch('setEl', {
       player: 'user',
       el: this.$refs.hand
     })
+  },
+  updated () {
+    this.fitDeck(this.$refs.hand)
   }
 }
 </script>

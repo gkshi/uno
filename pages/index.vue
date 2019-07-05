@@ -4,7 +4,7 @@
       .row.flex.top
         .cell.left
           .flex.a-end
-            .deck.flex(ref="deck" :class="deckClass")
+            .deck.flex(ref="deck")
               card(
               v-for="card in deck"
               :color="card.color"
@@ -19,131 +19,73 @@
         .cell.flex.j-end.right
           div
             a(href="#" @click.prevent="restart") restart
-            span &nbsp;
-            a(href="#" @click.prevent="dealFirstHands") deal cards
       .row.flex.middle
         .cell.flex.a-center.left
           player(:data="players.bot3")
         .cell.flex.center.middle
-          //- div table
+          gameTable
         .cell.flex.j-end.a-center.right
           player(:data="players.bot2")
       .row.flex.bottom
         .cell.flex.a-end.left
-          logs
+          // gameLogs
+          gameMonitoring
         .cell.flex.a-end.middle
           user
         .cell.flex.a-center.right
-          vButton uno
+          vButton.uno-button(v-if="gameStatus === 'in_progress'" @click="sayUno") uno
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex'
+import mixinDeck from '@/mixins/deck'
 import logMessages from '@/constants/logs'
 import card from '@/components/card'
 import player from '@/components/player'
+import gameTable from '@/components/table'
 import user from '@/components/user'
-import logs from '@/components/logs'
+import gameLogs from '@/components/logs'
+import gameMonitoring from '@/components/monitoring'
 import vButton from '@/components/button'
 
 export default {
   name: 'index-page',
+  mixins: [mixinDeck],
   components: {
     card,
     player,
+    gameTable,
     user,
-    logs,
+    gameLogs,
+    gameMonitoring,
     vButton
-  },
-  data () {
-    return {
-      isDeckHidden: true
-    }
   },
   computed: {
     ...mapState({
       players: state => state.players,
+      gameStatus: state => state.game.status,
       deck: state => state.deck,
       logs: state => state.logs
     }),
     ...mapGetters({
       cardsInDeck: 'cardsInDeck'
-    }),
-    deckClass () {
-      return this.isDeckHidden ? 'hidden' : ''
-    }
+    })
   },
   methods: {
     restart () {
       this.$store.dispatch('restart').then(() => {
-        setTimeout(() => {
-          this.fitDeck(this.$refs.deck)
-        }, 100)
+        this.fitDeck(this.$refs.deck)
       })
     },
     initDeck () {
       this.$store.dispatch('createDeck').then(() => {
         this.fitDeck(this.$refs.deck)
+        this.$store.dispatch('updateGameStatus', 'ready')
       })
     },
-    fitDeck (hand) {
-      if (!hand) {
-        return
-      }
-      const offset = 6
-      const margin = 10
-      const handWidth = hand.offsetWidth
-      const cardWidth = hand.children[0].offsetWidth
 
-      if (getComputedStyle(hand).getPropertyValue('position') !== 'absolute') {
-        hand.style.position = 'relative'
-      }
-
-      if ((cardWidth * hand.children.length) + (margin * hand.children.length - 1) < handWidth) {
-        hand.style.minHeight = ''
-        for (let i = 0; i < hand.children.length; i++) {
-          hand.children[i].style.position = ''
-        }
-        return
-      }
-
-      hand.style.minHeight = `${hand.children[0].offsetHeight}px`
-      let step = (handWidth - cardWidth) / (hand.children.length - 1)
-      for (let i = 0; i < hand.children.length; i++) {
-        let card = hand.children[i]
-        card.style.position = 'absolute'
-        if (step < offset) {
-          if ((offset * i) >= (handWidth - card.offsetWidth)) {
-            card.style.left = `${handWidth - card.offsetWidth}px`
-          } else {
-            card.style.left = `${offset * i}px`
-          }
-        } else {
-          card.style.left = `${step * i}px`
-        }
-      }
-      setTimeout(() => {
-        this.isDeckHidden = false
-      }, 10)
-    },
-    dealFirstHands () {
-      Object.keys(this.players).forEach(key => {
-        return new Promise((resolve, reject) => {
-          for (let j = 0; j < 7; j++) {
-            this.dealCard(this.players[key].id)
-          }
-          resolve()
-        }).then(() => {
-          setTimeout(() => {
-            this.fitDeck(this.players[key].el)
-          }, 100)
-        })
-      })
-      this.fitDeck(this.$refs.deck)
-      this.$store.dispatch('log', logMessages.handsDealed)
-    },
-    dealCard (player) {
-      this.$store.dispatch('dealCard', player)
+    sayUno () {
+      this.$store.dispatch('log', logMessages.user_uno)
     }
   },
   mounted () {
@@ -200,6 +142,22 @@ $padding: 3%;
   .game {
     & > * {
       margin: 0 5px;
+    }
+  }
+  .uno-button {
+    margin-left: 40px;
+    padding: 20px 30px 22px;
+    background: $color-red;
+    color: $color-light;
+    border-radius: 10px;
+    text-transform: uppercase;
+    font-weight: $font-weight-bold;
+    box-shadow: 4px 6px 0 0 darken($color-red, 16%);
+    &:hover {
+      margin-top: 2px;
+      margin-left: 42px;
+      background: lighten($color-red, 5%);
+      box-shadow: 2px 5px 0 0 darken($color-red, 16%);
     }
   }
 }

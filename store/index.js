@@ -1,6 +1,21 @@
 import game from '@/config/game'
 import logs from '@/constants/logs'
 
+function _getNextUser (player, players) {
+  if (!player) {
+    return 'user'
+  }
+  let hasFound = false
+  return Object.keys(players).forEach(key => {
+    if (hasFound) {
+      return key
+    }
+    if (key === player) {
+      hasFound = true
+    }
+  })
+}
+
 export const state = () => ({
   players: {
     bot1: {
@@ -35,25 +50,21 @@ export const state = () => ({
     }
   },
   game: {
-    status: 'ready',
+    status: 'not_ready', // not_ready, ready, in_progress, finished
     player: null,
     turn: 0
   },
   deck: [],
+  table: [],
   logs: []
 })
 
 export const actions = {
 
   restart ({ commit, dispatch }) {
-    return new Promise((resolve, reject) => {
-      commit('RESTART')
-      resolve()
-    }).then(() => {
-      setTimeout(() => {
-        dispatch('createDeck')
-      }, 0)
-    })
+    dispatch('updateGameStatus', 'not_ready')
+    commit('RESTART')
+    return dispatch('createDeck')
   },
 
   createDeck ({ commit, dispatch }) {
@@ -100,8 +111,9 @@ export const actions = {
     }).then(() => {
       commit('LOG_ADD', {
         id: Math.random().toFixed(6).toString().replace(/\./, ''),
-        text: logs.initDeck
+        text: logs.init_deck
       })
+      dispatch('updateGameStatus', 'ready')
     })
   },
 
@@ -146,6 +158,37 @@ export const actions = {
       id: Math.random().toFixed(6).toString().replace(/\./, ''),
       text: message
     })
+  },
+
+  updateGameStatus ({ commit }, status) {
+    commit('GAME_UPDATE', {
+      key: 'status',
+      value: status
+    })
+  },
+
+  nextTurn ({ commit, state }) {
+    commit('GAME_UPDATE', {
+      key: 'turn',
+      value: state.game.turn + 1
+    })
+    commit('GAME_UPDATE', {
+      key: 'player',
+      value: _getNextUser(state.game.player, state.players)
+    })
+  },
+
+  makeMove ({ commit, state }, payload) {
+    console.log('make Move', payload.cardId, payload.player)
+
+    const card = state.players[payload.player].cards.find(i => i.id === payload.cardId)
+    commit('TABLE_ADD', card)
+
+    commit('PLAYER_UPDATE', {
+      player: payload.player,
+      key: 'cards',
+      value: state.players[payload.player].cards.filter(i => i.id !== payload.cardId)
+    })
   }
 
 }
@@ -162,6 +205,10 @@ export const mutations = {
 
   RESTART (state) {
     state.deck = []
+    state.table = []
+    state.game.status = 'not_ready'
+    state.game.player = null
+    state.game.turn = 0
     Object.keys(state.players).forEach(key => {
       state.players[key].cards = []
     })
@@ -169,6 +216,10 @@ export const mutations = {
 
   PLAYER_SET_EL (state, payload) {
     state.players[payload.player].el = payload.el
+  },
+
+  PLAYER_UPDATE (state, payload) {
+    state.players[payload.player][payload.key] = payload.value
   },
 
   LOG_ADD (state, log) {
@@ -179,6 +230,17 @@ export const mutations = {
   },
   LOG_CLEAR (state) {
     state.logs = []
+  },
+
+  GAME_UPDATE (state, payload) {
+    state.game[payload.key] = payload.value
+  },
+
+  TABLE_ADD (state, card) {
+    state.table.push(card)
+  },
+  TABLE_UPDATE (state, table) {
+    state.table = table
   }
 }
 

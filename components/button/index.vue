@@ -1,5 +1,5 @@
 <template lang="pug">
-  .button-component
+  .button-component(@click="$emit('click')")
     slot
 </template>
 
@@ -11,6 +11,6 @@ export default {
 
 <style lang="scss" scoped>
   .button-component {
-    //
+    cursor: pointer;
   }
 </style>

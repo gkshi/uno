@@ -1,5 +1,9 @@
 <template lang="pug">
-  .card-component(:class="classList" @mouseenter="enter" @mouseleave="leave")
+  .card-component(
+    :class="classList"
+    @mouseenter="enter"
+    @mouseleave="leave"
+    @click="$emit('click')")
     .card(:class="cardClass")
       .front
         .content.flex.center

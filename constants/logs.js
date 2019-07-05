@@ -1,6 +1,7 @@
 const logs = {
-  initDeck: 'Колода сгенерирована',
-  handsDealed: 'Карты розданы игрокам'
+  init_deck: 'Колода сгенерирована',
+  hands_dealed: 'Карты розданы игрокам',
+  user_uno: 'Вы говорите UNO'
 }
 
 export default logs

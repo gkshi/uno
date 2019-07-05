@@ -8,11 +8,11 @@
       .cards.flex(ref="hand")
         card.card(
           v-for="card in data.cards"
-          :hidden="true"
+          :hidden="false"
           size="small"
-          type="card.type"
-          color="card.color"
-          value="card.value"
+          :type="card.type"
+          :color="card.color"
+          :value="card.value"
           :key="card.id")
       .flex(v-if="cardsCount")
         .label.count(v-if="cardsCount > 1") {{ cardsCount }}
@@ -20,10 +20,12 @@
 </template>
 
 <script>
+import mixinDeck from '@/mixins/deck'
 import card from '@/components/card'
 
 export default {
   name: 'player-component',
+  mixins: [mixinDeck],
   components: {
     card
   },
@@ -43,7 +45,9 @@ export default {
       player: this.data.id,
       el: this.$refs.hand
     })
-    // this.$parent.$on('fitDeck', ref => this.fitHand(ref))
+  },
+  updated () {
+    this.fitDeck(this.$refs.hand)
   }
 }
 </script>
