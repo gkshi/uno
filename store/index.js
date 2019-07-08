@@ -1,19 +1,29 @@
 import game from '@/config/game'
 import logs from '@/constants/logs'
 
-function _getNextUser (player, players) {
+const playersMap = new Map([
+  ['bot1'],
+  ['bot2'],
+  ['user'],
+  ['bot3']
+])
+
+function _getNextUser (player) {
   if (!player) {
     return 'user'
   }
   let hasFound = false
-  return Object.keys(players).forEach(key => {
+  let needUser = null
+  playersMap.forEach((val, key) => {
     if (hasFound) {
-      return key
+      needUser = key
+      return
     }
     if (key === player) {
       hasFound = true
     }
   })
+  return needUser
 }
 
 export const state = () => ({
@@ -50,6 +60,7 @@ export const state = () => ({
     }
   },
   game: {
+    direction: 'clockwise', // clockwise, counterclockwise
     status: 'not_ready', // not_ready, ready, in_progress, finished
     player: null,
     turn: 0
@@ -82,7 +93,8 @@ export const actions = {
                   id: total,
                   color,
                   type,
-                  value: i.toString()
+                  value: i.toString(),
+                  _position: null
                 }
                 generated.push(card)
                 total++
@@ -174,7 +186,7 @@ export const actions = {
     })
     commit('GAME_UPDATE', {
       key: 'player',
-      value: _getNextUser(state.game.player, state.players)
+      value: _getNextUser(state.game.player)
     })
   },
 
@@ -188,6 +200,11 @@ export const actions = {
       player: payload.player,
       key: 'cards',
       value: state.players[payload.player].cards.filter(i => i.id !== payload.cardId)
+    })
+    console.log('state.game.player', state.game.player)
+    commit('GAME_UPDATE', {
+      key: 'player',
+      value: _getNextUser(state.game.player)
     })
   }
 

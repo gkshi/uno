@@ -1,7 +1,5 @@
 <template lang="pug">
   .table-component
-    div table
-
     template(v-if="gameStatus === 'not_ready'")
       div ...loading
 
@@ -11,18 +9,26 @@
 
     template(v-else)
       .flex.wrap
-        div(v-for="card in cards" :key="card.id" style="margin: 4px;") {{ card.id }}
+        vCard(
+          v-for="card in cards"
+          :color="card.color"
+          :type="card.type"
+          :value="card.value"
+          size="small"
+          :key="card.id") {{ card.id }}
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import logMessages from '@/constants/logs'
 import vButton from '@/components/button'
+import vCard from '@/components/card'
 
 export default {
   name: 'table-component',
   components: {
-    vButton
+    vButton,
+    vCard
   },
   computed: {
     ...mapState({

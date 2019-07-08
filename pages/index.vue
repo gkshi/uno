@@ -85,6 +85,7 @@ export default {
     },
 
     sayUno () {
+      alert('UNO!')
       this.$store.dispatch('log', logMessages.user_uno)
     }
   },

@@ -15,10 +15,12 @@ export default {
           hand.style.position = 'relative'
         }
 
+        // if fit don't need
         if ((cardWidth * hand.children.length) + (margin * hand.children.length - 1) < handWidth) {
           hand.style.minHeight = ''
           for (let i = 0; i < hand.children.length; i++) {
             hand.children[i].style.position = ''
+            hand.children[i].style.left = ''
           }
           return
         }
