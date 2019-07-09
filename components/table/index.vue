@@ -1,11 +1,11 @@
 <template lang="pug">
-  .table-component
+  .table-component.flex.center
     template(v-if="gameStatus === 'not_ready'")
       div ...loading
 
     template(v-else-if="gameStatus === 'ready'")
       div
-        vButton(@click="startGame") начать
+        vButton(color="blue" @click="startGame") Играть
 
     template(v-else)
       .flex.wrap
@@ -15,6 +15,7 @@
           :type="card.type"
           :value="card.value"
           size="small"
+          :style="cardStyle(card._position)"
           :key="card.id") {{ card.id }}
 </template>
 
@@ -38,6 +39,9 @@ export default {
     })
   },
   methods: {
+    cardStyle (position = {}) {
+      return `position: absolute; top: ${position.top}; left: ${position.left}; transform: scale(0.62) translate(-30%, -30%) rotate(${position.angle});`
+    },
     startGame () {
       this.dealFirstHands()
     },
@@ -60,6 +64,8 @@ export default {
 
 <style lang="scss" scoped>
   .table-component {
-    //
+    position: relative;
+    width: 100%;
+    height: 100%;
   }
 </style>

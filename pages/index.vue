@@ -14,24 +14,32 @@
               :hidden="true"
               :key="card.id")
             .label(v-if="cardsInDeck") {{ cardsInDeck }}
+
         .cell.flex.j-center.middle
           player(:data="players.bot1")
+
         .cell.flex.j-end.right
           div
             a(href="#" @click.prevent="restart") restart
+
       .row.flex.middle
         .cell.flex.a-center.left
           player(:data="players.bot3")
+
         .cell.flex.center.middle
           gameTable
+
         .cell.flex.j-end.a-center.right
           player(:data="players.bot2")
+
       .row.flex.bottom
         .cell.flex.a-end.left
           // gameLogs
           gameMonitoring
+
         .cell.flex.a-end.middle
           user
+
         .cell.flex.a-center.right
           vButton.uno-button(v-if="gameStatus === 'in_progress'" @click="sayUno") uno
 </template>
@@ -147,18 +155,8 @@ $padding: 3%;
   }
   .uno-button {
     margin-left: 40px;
-    padding: 20px 30px 22px;
-    background: $color-red;
-    color: $color-light;
-    border-radius: 10px;
-    text-transform: uppercase;
-    font-weight: $font-weight-bold;
-    box-shadow: 4px 6px 0 0 darken($color-red, 16%);
     &:hover {
-      margin-top: 2px;
       margin-left: 42px;
-      background: lighten($color-red, 5%);
-      box-shadow: 2px 5px 0 0 darken($color-red, 16%);
     }
   }
 }

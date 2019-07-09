@@ -14,15 +14,18 @@ function _getNextUser (player) {
   }
   let hasFound = false
   let needUser = null
-  playersMap.forEach((val, key) => {
-    if (hasFound) {
+  let i = 1
+  for (let key of playersMap.keys()) {
+    if (hasFound && !needUser) {
       needUser = key
-      return
-    }
-    if (key === player) {
+    } else if (key === player) {
       hasFound = true
+      if (i === playersMap.size) {
+        needUser = playersMap.keys().next().value
+      }
     }
-  })
+    i++
+  }
   return needUser
 }
 
@@ -106,7 +109,8 @@ export const actions = {
               let card = {
                 id: total,
                 color,
-                type
+                type,
+                _position: null
               }
               generated.push(card)
               total++
@@ -191,9 +195,8 @@ export const actions = {
   },
 
   makeMove ({ commit, state }, payload) {
-    console.log('make Move', payload.cardId, payload.player)
-
     const card = state.players[payload.player].cards.find(i => i.id === payload.cardId)
+    commit('CARD_UPDATE', card)
     commit('TABLE_ADD', card)
 
     commit('PLAYER_UPDATE', {
@@ -201,7 +204,6 @@ export const actions = {
       key: 'cards',
       value: state.players[payload.player].cards.filter(i => i.id !== payload.cardId)
     })
-    console.log('state.game.player', state.game.player)
     commit('GAME_UPDATE', {
       key: 'player',
       value: _getNextUser(state.game.player)
@@ -211,6 +213,14 @@ export const actions = {
 }
 
 export const mutations = {
+  CARD_UPDATE (state, card) {
+    console.log('card', card)
+    card._position = {
+      top: `${Math.floor(Math.random() * (35 - 20 + 1)) + 20}%`,
+      left: `${Math.floor(Math.random() * (55 - 35 + 1)) + 35}%`,
+      angle: `${Math.floor(Math.random() * (30 + 30 + 1)) - 30}deg`
+    }
+  },
   DECK_UPDATE (state, cards) {
     state.deck = cards
   },
