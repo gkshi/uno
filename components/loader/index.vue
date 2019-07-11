@@ -20,8 +20,7 @@ export default {
     },
     min: {
       type: Number,
-      // default: 3000
-      default: 1000
+      default: process.env.isDev ? 1000 : 3000
     }
   },
   data () {

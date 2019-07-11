@@ -3,55 +3,39 @@
     .table
       .row.flex.top
         .cell.left
-          .flex.a-end
-            .deck.flex(ref="deck")
-              card(
-              v-for="card in deck"
-              :color="card.color"
-              :type="card.type"
-              :value="card.value"
-              size="small"
-              :hidden="true"
-              :key="card.id")
-            .label(v-if="cardsInDeck") {{ cardsInDeck }}
-
+          gameDeck
         .cell.flex.j-center.middle
-          player(:data="players.bot1")
-
+          gamePlayer(:data="players.bot1")
         .cell.flex.j-end.right
           div
             a(href="#" @click.prevent="restart") restart
 
       .row.flex.middle
         .cell.flex.a-center.left
-          player(:data="players.bot3")
-
+          gamePlayer(:data="players.bot3")
         .cell.flex.center.middle
           gameTable
-
         .cell.flex.j-end.a-center.right
-          player(:data="players.bot2")
+          gamePlayer(:data="players.bot2")
 
       .row.flex.bottom
         .cell.flex.a-end.left
           // gameLogs
           gameMonitoring
-
         .cell.flex.a-end.middle
-          user
-
+          gameUser
         .cell.flex.a-center.right
           vButton.uno-button(v-if="gameStatus === 'in_progress'" @click="sayUno") uno
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 import mixinDeck from '@/mixins/deck'
+import gameDeck from '@/components/deck'
 import logMessages from '@/constants/logs'
-import card from '@/components/card'
-import player from '@/components/player'
+import gamePlayer from '@/components/player'
 import gameTable from '@/components/table'
-import user from '@/components/user'
+import gameUser from '@/components/user'
 import gameLogs from '@/components/logs'
 import gameMonitoring from '@/components/monitoring'
 import vButton from '@/components/button'
@@ -60,10 +44,10 @@ export default {
   name: 'index-page',
   mixins: [mixinDeck],
   components: {
-    card,
-    player,
+    gameDeck,
+    gamePlayer,
     gameTable,
-    user,
+    gameUser,
     gameLogs,
     gameMonitoring,
     vButton
@@ -72,33 +56,25 @@ export default {
     ...mapState({
       players: state => state.players,
       gameStatus: state => state.game.status,
-      deck: state => state.deck,
       logs: state => state.logs
-    }),
-    ...mapGetters({
-      cardsInDeck: 'cardsInDeck'
     })
   },
   methods: {
-    restart () {
-      this.$store.dispatch('restart').then(() => {
-        this.fitDeck(this.$refs.deck)
-      })
-    },
-    initDeck () {
+    init () {
       this.$store.dispatch('createDeck').then(() => {
-        this.fitDeck(this.$refs.deck)
         this.$store.dispatch('updateGameStatus', 'ready')
       })
     },
-
+    restart () {
+      this.$store.dispatch('restart')
+    },
     sayUno () {
       alert('UNO!')
       this.$store.dispatch('log', logMessages.user_uno)
     }
   },
   mounted () {
-    this.initDeck()
+    this.init()
   }
 }
 </script>
@@ -136,16 +112,6 @@ $padding: 3%;
         width: 27%;
         padding-right: $padding;
       }
-    }
-  }
-  .deck {
-    width: 100%;
-    max-width: 240px;
-    min-height: 100px;
-    margin-right: 10px;
-    overflow: hidden;
-    &.hidden {
-      opacity: 0;
     }
   }
   .game {

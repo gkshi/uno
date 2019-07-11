@@ -7,6 +7,10 @@ module.exports = {
     port: 3030
   },
 
+  env: {
+    isDev: true
+  },
+
   /*
   ** Headers of the page
   */

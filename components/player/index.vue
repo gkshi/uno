@@ -1,7 +1,7 @@
 <template lang="pug">
   .player-component.flex
     .info
-      .photo
+      .photo(:class="{ 'active': isActive }")
         img(:src="data.photo")
       .label.name {{ data.name }}
     .hand
@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import mixinDeck from '@/mixins/deck'
 import card from '@/components/card'
 
@@ -35,9 +36,48 @@ export default {
       default: () => {}
     }
   },
+  data () {
+    return {
+      timeout: null
+    }
+  },
   computed: {
+    ...mapState({
+      activePlayer: state => state.game.player
+    }),
     cardsCount () {
       return this.data.cards.length
+    },
+    isActive () {
+      return this.activePlayer === this.data.id
+    }
+  },
+  watch: {
+    activePlayer () {
+      if (this.isActive) {
+        this.think()
+      }
+    }
+  },
+  methods: {
+    chooseCard () {
+      // TODO: write
+      const card = this.data.cards[0]
+      console.log('choose card', card)
+      return card
+    },
+    think () {
+      const timeToThink = process.env.isDev ? '300' : Math.floor(Math.random() * (4000 - 1000 + 1)) + 1000
+      this.timeout = setTimeout(() => {
+        this.makeMove()
+      }, timeToThink)
+    },
+    makeMove () {
+      console.log('make move', this.data.id)
+      this.$store.dispatch('makeMove', {
+        cardId: this.chooseCard().id,
+        player: this.data.id
+      })
     }
   },
   mounted () {
@@ -66,6 +106,7 @@ export default {
       margin-bottom: $margin;
       border-radius: 4px;
       border: 4px solid $color-light;
+      transition: $transition-default;
       img {
         display: block;
         width: 100%;
@@ -73,6 +114,9 @@ export default {
         object-fit: cover;
         object-position: center;
         border-radius: 2px;
+      }
+      &.active {
+        box-shadow: 0 0 40px 0 #FFFFFF;
       }
     }
     .count {

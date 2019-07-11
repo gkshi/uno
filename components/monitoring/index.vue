@@ -3,7 +3,6 @@
     div direction: {{ direction }}
     div gameStatus: {{ gameStatus }}
     div activePlayer: {{ activePlayer || '-' }}
-    div turn: {{ turn }}
 </template>
 
 <script>
@@ -15,8 +14,7 @@ export default {
     ...mapState({
       direction: state => state.game.direction,
       gameStatus: state => state.game.status,
-      activePlayer: state => state.game.player,
-      turn: state => state.game.turn
+      activePlayer: state => state.game.player
     })
   }
 }

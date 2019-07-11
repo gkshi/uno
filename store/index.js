@@ -65,8 +65,7 @@ export const state = () => ({
   game: {
     direction: 'clockwise', // clockwise, counterclockwise
     status: 'not_ready', // not_ready, ready, in_progress, finished
-    player: null,
-    turn: 0
+    player: null
   },
   deck: [],
   table: [],
@@ -194,31 +193,50 @@ export const actions = {
     })
   },
 
+  /**
+   * Make move
+   * @param commit
+   * @param state
+   * @param payload { cardId, player }
+   */
   makeMove ({ commit, state }, payload) {
     const card = state.players[payload.player].cards.find(i => i.id === payload.cardId)
+
+    // add card on the table
     commit('CARD_UPDATE', card)
     commit('TABLE_ADD', card)
 
+    // update player hand
     commit('PLAYER_UPDATE', {
       player: payload.player,
       key: 'cards',
       value: state.players[payload.player].cards.filter(i => i.id !== payload.cardId)
     })
-    commit('GAME_UPDATE', {
-      key: 'player',
-      value: _getNextUser(state.game.player)
-    })
+
+    // check game status (has won?)
+    if (!state.players[payload.player].cards.length) {
+      // change game status
+      commit('GAME_UPDATE', {
+        key: 'status',
+        value: 'finished'
+      })
+    } else {
+      // change turn
+      commit('GAME_UPDATE', {
+        key: 'player',
+        value: _getNextUser(state.game.player)
+      })
+    }
   }
 
 }
 
 export const mutations = {
   CARD_UPDATE (state, card) {
-    console.log('card', card)
     card._position = {
-      top: `${Math.floor(Math.random() * (35 - 20 + 1)) + 20}%`,
-      left: `${Math.floor(Math.random() * (55 - 35 + 1)) + 35}%`,
-      angle: `${Math.floor(Math.random() * (30 + 30 + 1)) - 30}deg`
+      top: `${Math.floor(Math.random() * (30 - 15 + 1)) + 15}%`,
+      left: `${Math.floor(Math.random() * (50 - 30 + 1)) + 30}%`,
+      angle: `${Math.floor(Math.random() * (40 + 40 + 1)) - 40}deg`
     }
   },
   DECK_UPDATE (state, cards) {

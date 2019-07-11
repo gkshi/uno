@@ -14,7 +14,6 @@
           :color="card.color"
           :type="card.type"
           :value="card.value"
-          size="small"
           :style="cardStyle(card._position)"
           :key="card.id") {{ card.id }}
 </template>
@@ -40,7 +39,7 @@ export default {
   },
   methods: {
     cardStyle (position = {}) {
-      return `position: absolute; top: ${position.top}; left: ${position.left}; transform: scale(0.62) translate(-30%, -30%) rotate(${position.angle});`
+      return `position: absolute; top: ${position.top}; left: ${position.left}; transform: rotate(${position.angle});`
     },
     startGame () {
       this.dealFirstHands()
