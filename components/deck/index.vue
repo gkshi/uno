@@ -1,7 +1,9 @@
 <template lang="pug">
   .deck-component.flex.a-end
+    .action.flex.a-center
+      vButton(@click="takeCard") Взять карту
     .deck.flex(ref="deck")
-      card(
+      gameCard(
         v-for="card in deck"
         :color="card.color"
         :type="card.type"
@@ -15,13 +17,15 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import mixinDeck from '@/mixins/deck'
-import card from '@/components/card'
+import gameCard from '@/components/card'
+import vButton from '@/components/button'
 
 export default {
   name: 'deck-component',
   mixins: [mixinDeck],
   components: {
-    card
+    gameCard,
+    vButton
   },
   computed: {
     ...mapState({
@@ -31,6 +35,11 @@ export default {
       cardsInDeck: 'cardsInDeck'
     })
   },
+  methods: {
+    takeCard () {
+      this.$store.dispatch('takeCardFromDeck', 'user')
+    }
+  },
   updated () {
     this.fitDeck(this.$refs.deck)
   }
@@ -39,6 +48,7 @@ export default {
 
 <style lang="scss" scoped>
   .deck-component {
+    position: relative;
     .deck {
       width: 100%;
       max-width: 240px;
@@ -47,6 +57,23 @@ export default {
       overflow: hidden;
       &.hidden {
         opacity: 0;
+      }
+    }
+    .action {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      padding-left: 20px;
+      opacity: 0;
+      visibility: hidden;
+    }
+    &:hover {
+      .action {
+        opacity: 1;
+        visibility: visible;
       }
     }
   }

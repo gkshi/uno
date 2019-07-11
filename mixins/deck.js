@@ -4,7 +4,6 @@ export default {
       if (!hand) {
         return
       }
-
       this.$nextTick(() => {
         const offset = 6
         const margin = 10
@@ -41,7 +40,6 @@ export default {
           }
         }
       })
-      // this.isDeckHidden = false
     }
   }
 }

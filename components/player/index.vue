@@ -67,7 +67,7 @@ export default {
       return card
     },
     think () {
-      const timeToThink = process.env.isDev ? '300' : Math.floor(Math.random() * (4000 - 1000 + 1)) + 1000
+      const timeToThink = process.env.isDev ? '500' : Math.floor(Math.random() * (4000 - 1000 + 1)) + 1000
       this.timeout = setTimeout(() => {
         this.makeMove()
       }, timeToThink)

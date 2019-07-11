@@ -1,5 +1,6 @@
 <template lang="pug">
   .monitoring-component
+    div color: {{ color || 'null' }}
     div direction: {{ direction }}
     div gameStatus: {{ gameStatus }}
     div activePlayer: {{ activePlayer || '-' }}
@@ -12,6 +13,7 @@ export default {
   name: 'monitoring-component',
   computed: {
     ...mapState({
+      color: state => state.game.color,
       direction: state => state.game.direction,
       gameStatus: state => state.game.status,
       activePlayer: state => state.game.player

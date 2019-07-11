@@ -38,11 +38,12 @@ export default {
     })
   },
   methods: {
-    cardStyle (position = {}) {
-      return `position: absolute; top: ${position.top}; left: ${position.left}; transform: rotate(${position.angle});`
+    cardStyle (position) {
+      return position ? `position: absolute; top: ${position.top}; left: ${position.left}; transform: rotate(${position.angle});` : ''
     },
     startGame () {
       this.dealFirstHands()
+      this.dealFirstCardIntoTable()
     },
     dealFirstHands () {
       Object.keys(this.players).forEach(key => {
@@ -53,6 +54,9 @@ export default {
       this.$store.dispatch('log', logMessages.hands_dealed)
       this.$store.dispatch('updateGameStatus', 'in_progress')
       this.$store.dispatch('nextTurn')
+    },
+    dealFirstCardIntoTable () {
+      this.$store.dispatch('dealIntoTable')
     },
     dealCard (player) {
       this.$store.dispatch('dealCard', player)

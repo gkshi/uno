@@ -8,12 +8,15 @@ const playersMap = new Map([
   ['bot3']
 ])
 
-function _getNextUser (player) {
+function _getNextUser (player, direction) {
+  // TODO: проверять направление
+  console.log('direction', direction)
   if (!player) {
     return 'user'
   }
   let hasFound = false
   let needUser = null
+  // let previous = null
   let i = 1
   for (let key of playersMap.keys()) {
     if (hasFound && !needUser) {
@@ -63,9 +66,10 @@ export const state = () => ({
     }
   },
   game: {
+    color: null, // current game color
     direction: 'clockwise', // clockwise, counterclockwise
     status: 'not_ready', // not_ready, ready, in_progress, finished
-    player: null
+    player: null // active player at the moment
   },
   deck: [],
   table: [],
@@ -159,6 +163,30 @@ export const actions = {
     commit('DEAL', getters.player(playerId))
   },
 
+  dealIntoTable ({ commit, dispatch, state }) {
+    const card = state.deck[state.deck.length - 1]
+    commit('TABLE_ADD', card)
+    commit('DECK_POP')
+
+    // TODO: update game color here
+    // TODO: check game direction here
+    dispatch('analyzeLastTableCard')
+  },
+
+  analyzeLastTableCard ({ state, commit }) {
+    const card = state.table[state.table.length - 1]
+    commit('GAME_UPDATE', {
+      key: 'color',
+      value: card.color
+    })
+    if (card.type === 'reverse') {
+      commit('GAME_UPDATE', {
+        key: 'direction',
+        value: state.game.direction === 'clockwise' ? 'counterclockwise' : 'clockwise'
+      })
+    }
+  },
+
   setEl ({ commit, getters }, payload) {
     return new Promise((resolve, reject) => {
       commit('PLAYER_SET_EL', payload)
@@ -184,27 +212,38 @@ export const actions = {
 
   nextTurn ({ commit, state }) {
     commit('GAME_UPDATE', {
-      key: 'turn',
-      value: state.game.turn + 1
+      key: 'player',
+      value: _getNextUser(state.game.player, state.game.direction)
     })
+  },
+
+  takeCardFromDeck ({ commit, state, getters }, playerId) {
+    commit('PLAYER_UPDATE', {
+      player: playerId,
+      key: 'cards',
+      value: [ ...state.players[playerId].cards, getters.lastDeckCard ]
+    })
+    commit('DECK_POP')
     commit('GAME_UPDATE', {
       key: 'player',
-      value: _getNextUser(state.game.player)
+      value: _getNextUser(state.game.player, state.game.direction)
     })
   },
 
   /**
    * Make move
-   * @param commit
-   * @param state
    * @param payload { cardId, player }
    */
-  makeMove ({ commit, state }, payload) {
+  makeMove ({ commit, dispatch, state }, payload) {
     const card = state.players[payload.player].cards.find(i => i.id === payload.cardId)
 
     // add card on the table
     commit('CARD_UPDATE', card)
     commit('TABLE_ADD', card)
+
+    // TODO: update game color here
+    // TODO: check game direction here
+    dispatch('analyzeLastTableCard')
 
     // update player hand
     commit('PLAYER_UPDATE', {
@@ -224,7 +263,7 @@ export const actions = {
       // change turn
       commit('GAME_UPDATE', {
         key: 'player',
-        value: _getNextUser(state.game.player)
+        value: _getNextUser(state.game.player, state.game.direction)
       })
     }
   }
@@ -236,8 +275,11 @@ export const mutations = {
     card._position = {
       top: `${Math.floor(Math.random() * (30 - 15 + 1)) + 15}%`,
       left: `${Math.floor(Math.random() * (50 - 30 + 1)) + 30}%`,
-      angle: `${Math.floor(Math.random() * (40 + 40 + 1)) - 40}deg`
+      angle: `${Math.floor(Math.random() * (60 + 60 + 1)) - 60}deg`
     }
+  },
+  DECK_POP (state) {
+    state.deck.pop()
   },
   DECK_UPDATE (state, cards) {
     state.deck = cards
@@ -283,9 +325,6 @@ export const mutations = {
 
   TABLE_ADD (state, card) {
     state.table.push(card)
-  },
-  TABLE_UPDATE (state, table) {
-    state.table = table
   }
 }
 
@@ -295,10 +334,14 @@ export const getters = {
   },
   player: state => id => {
     return state.players[id]
-    // return state.players.find(player => player.id === id)
   },
-  user: (state) => {
+  user: state => {
     return state.players.user
-    // return getters.player('user')
+  },
+  lastDeckCard: state => {
+    return state.deck[state.deck.length - 1]
+  },
+  lastTableCard: state => {
+    return state.table[state.table.length - 1]
   }
 }
