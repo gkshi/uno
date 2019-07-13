@@ -2,6 +2,7 @@
   .monitoring-component
     div color: {{ color || 'null' }}
     div direction: {{ direction }}
+    div accumulative: {{ accumulative || 'null' }}
     div gameStatus: {{ gameStatus }}
     div activePlayer: {{ activePlayer || '-' }}
 </template>
@@ -15,6 +16,7 @@ export default {
     ...mapState({
       color: state => state.game.color,
       direction: state => state.game.direction,
+      accumulative: state => state.game.accumulative,
       gameStatus: state => state.game.status,
       activePlayer: state => state.game.player
     })

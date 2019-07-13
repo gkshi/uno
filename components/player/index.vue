@@ -1,5 +1,5 @@
 <template lang="pug">
-  .player-component.flex
+  .player-component.flex(:class="{ inversed }")
     .info
       .photo(:class="{ 'active': isActive }")
         img(:src="data.photo")
@@ -7,7 +7,7 @@
     .hand
       .cards.flex(ref="hand")
         card.card(
-          v-for="card in data.cards"
+          v-for="card in hand"
           :hidden="false"
           size="small"
           :type="card.type"
@@ -16,17 +16,18 @@
           :key="card.id")
       .flex(v-if="cardsCount")
         .label.count(v-if="cardsCount > 1") {{ cardsCount }}
-        .label.count(v-else) UNO!
+        .label.count.attention(v-else) UNO!
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import mixinDeck from '@/mixins/deck'
+import mixinCards from '@/mixins/cards'
 import card from '@/components/card'
 
 export default {
   name: 'player-component',
-  mixins: [mixinDeck],
+  mixins: [mixinDeck, mixinCards],
   components: {
     card
   },
@@ -34,7 +35,8 @@ export default {
     data: {
       type: Object,
       default: () => {}
-    }
+    },
+    inversed: Boolean
   },
   data () {
     return {
@@ -43,10 +45,17 @@ export default {
   },
   computed: {
     ...mapState({
-      activePlayer: state => state.game.player
+      activePlayer: state => state.game.player,
+      gameAccumulative: state => state.game.accumulative
     }),
+    ...mapGetters({
+      lastTableCard: 'lastTableCard'
+    }),
+    hand () {
+      return this.data.cards
+    },
     cardsCount () {
-      return this.data.cards.length
+      return this.hand.length
     },
     isActive () {
       return this.activePlayer === this.data.id
@@ -62,22 +71,29 @@ export default {
   methods: {
     chooseCard () {
       // TODO: write
-      const card = this.data.cards[0]
-      console.log('choose card', card)
+      const card = this.activeCards[0]
+      console.log(this.data.id, 'choose card', card)
       return card
     },
     think () {
-      const timeToThink = process.env.isDev ? '500' : Math.floor(Math.random() * (4000 - 1000 + 1)) + 1000
+      const timeToThink = process.env.isDev ? '800' : Math.floor(Math.random() * (4000 - 1000 + 1)) + 1000
       this.timeout = setTimeout(() => {
         this.makeMove()
       }, timeToThink)
     },
     makeMove () {
-      console.log('make move', this.data.id)
-      this.$store.dispatch('makeMove', {
-        cardId: this.chooseCard().id,
-        player: this.data.id
-      })
+      if (this.activeCards.length) {
+        this.$store.dispatch('makeMove', {
+          cardId: this.chooseCard().id,
+          player: this.data.id
+        })
+      } else {
+        if (this.gameAccumulative) {
+          this.$store.dispatch('takeAccumulativeCards', this.data.id)
+        } else {
+          this.$store.dispatch('takeCardFromDeck', this.data.id)
+        }
+      }
     }
   },
   mounted () {
@@ -130,6 +146,25 @@ export default {
         margin-right: 6px;
         &:last-child {
           margin-right: 0;
+        }
+      }
+    }
+
+    .label.attention {
+      font-size: $font-size-small;
+      font-weight: $font-weight-bold;
+    }
+
+    &.inversed {
+      flex-direction: row-reverse;
+      .info {
+        margin-right: 0;
+        margin-left: 10px;
+      }
+      .hand {
+        justify-content: flex-end;
+        .flex {
+          justify-content: inherit;
         }
       }
     }

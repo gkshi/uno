@@ -16,7 +16,7 @@
         .cell.flex.center.middle
           gameTable
         .cell.flex.j-end.a-center.right
-          gamePlayer(:data="players.bot2")
+          gamePlayer(:data="players.bot2" inversed)
 
       .row.flex.bottom
         .cell.flex.a-end.left

@@ -1,7 +1,7 @@
 <template lang="pug">
   .deck-component.flex.a-end
-    .action.flex.a-center
-      vButton(@click="takeCard") Взять карту
+    .action.flex.a-center(:hidden.prop="activePlayer !== 'user'")
+      vButton(@click="takeCard") Взять
     .deck.flex(ref="deck")
       gameCard(
         v-for="card in deck"
@@ -29,7 +29,8 @@ export default {
   },
   computed: {
     ...mapState({
-      deck: state => state.deck
+      deck: state => state.deck,
+      activePlayer: state => state.game.player
     }),
     ...mapGetters({
       cardsInDeck: 'cardsInDeck'
@@ -37,7 +38,11 @@ export default {
   },
   methods: {
     takeCard () {
-      this.$store.dispatch('takeCardFromDeck', 'user')
+      if (this.gameAccumulative) {
+        this.$store.dispatch('takeAccumulativeCards', 'user')
+      } else {
+        this.$store.dispatch('takeCardFromDeck', 'user')
+      }
     }
   },
   updated () {
@@ -66,7 +71,7 @@ export default {
       width: 100%;
       height: 100%;
       z-index: 1;
-      padding-left: 20px;
+      padding-left: 34px;
       opacity: 0;
       visibility: hidden;
     }

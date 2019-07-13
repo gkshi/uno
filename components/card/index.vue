@@ -3,7 +3,7 @@
     :class="classList"
     @mouseenter="enter"
     @mouseleave="leave"
-    @click="$emit('click')")
+    @click="click")
     .card(:class="cardClass")
       .front
         .content.flex.center
@@ -90,6 +90,12 @@ export default {
       if (this.interactive) {
         this.isHover = false
       }
+    },
+    click () {
+      if (process.env.isDev) {
+        console.log(this.color, this.type, this.value)
+      }
+      this.$emit('click')
     }
   },
   created () {

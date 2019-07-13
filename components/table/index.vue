@@ -16,6 +16,10 @@
           :value="card.value"
           :style="cardStyle(card._position)"
           :key="card.id") {{ card.id }}
+
+      .direction(:class="gameDirection")
+        iconArrow.arrow
+        iconArrow.arrow.rotate
 </template>
 
 <script>
@@ -23,18 +27,21 @@ import { mapState } from 'vuex'
 import logMessages from '@/constants/logs'
 import vButton from '@/components/button'
 import vCard from '@/components/card'
+import iconArrow from '@/components/icons/arrow'
 
 export default {
   name: 'table-component',
   components: {
     vButton,
-    vCard
+    vCard,
+    iconArrow
   },
   computed: {
     ...mapState({
       cards: state => state.table,
       players: state => state.players,
-      gameStatus: state => state.game.status
+      gameStatus: state => state.game.status,
+      gameDirection: state => state.game.direction
     })
   },
   methods: {
@@ -70,5 +77,24 @@ export default {
     position: relative;
     width: 100%;
     height: 100%;
+    .direction {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: .5;
+      .arrow {
+        position: absolute;
+        top: 50%;
+        left: 70px;
+        transform: translate(0, -50%);
+        &.rotate {
+          left: auto;
+          right: 70px;
+          transform: translate(0, -50%) rotate(180deg);
+        }
+      }
+    }
   }
 </style>

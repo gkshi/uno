@@ -10,7 +10,6 @@ const playersMap = new Map([
 
 function _getNextUser (player, direction) {
   // TODO: проверять направление
-  console.log('direction', direction)
   if (!player) {
     return 'user'
   }
@@ -68,6 +67,7 @@ export const state = () => ({
   game: {
     color: null, // current game color
     direction: 'clockwise', // clockwise, counterclockwise
+    accumulative: null, // null or sum of "plus" cards
     status: 'not_ready', // not_ready, ready, in_progress, finished
     player: null // active player at the moment
   },
@@ -170,7 +170,7 @@ export const actions = {
 
     // TODO: update game color here
     // TODO: check game direction here
-    dispatch('analyzeLastTableCard')
+    // dispatch('analyzeLastTableCard')
   },
 
   analyzeLastTableCard ({ state, commit }) {
@@ -183,6 +183,12 @@ export const actions = {
       commit('GAME_UPDATE', {
         key: 'direction',
         value: state.game.direction === 'clockwise' ? 'counterclockwise' : 'clockwise'
+      })
+    }
+    if (card.type === 'wild_draw_four' || card.type === 'draw_two') {
+      commit('GAME_UPDATE', {
+        key: 'accumulative',
+        value: card.type === 'wild_draw_four' ? 4 : 2
       })
     }
   },
@@ -217,13 +223,33 @@ export const actions = {
     })
   },
 
-  takeCardFromDeck ({ commit, state, getters }, playerId) {
+  _takeCardFromDeck ({ commit, state, getters }, playerId) {
     commit('PLAYER_UPDATE', {
       player: playerId,
       key: 'cards',
       value: [ ...state.players[playerId].cards, getters.lastDeckCard ]
     })
     commit('DECK_POP')
+  },
+
+  takeCardFromDeck ({ dispatch, commit, state }, playerId) {
+    // TODO: сделать проверку на черные карты.
+    // Давать юзеру ходить любой картой в первый ход
+    dispatch('_takeCardFromDeck', playerId)
+    commit('GAME_UPDATE', {
+      key: 'player',
+      value: _getNextUser(state.game.player, state.game.direction)
+    })
+  },
+
+  takeAccumulativeCards ({ commit, dispatch, state }, playerId) {
+    for (let i = 0; i < state.game.accumulative; i++) {
+      dispatch('_takeCardFromDeck', playerId)
+    }
+    commit('GAME_UPDATE', {
+      key: 'accumulative',
+      value: null
+    })
     commit('GAME_UPDATE', {
       key: 'player',
       value: _getNextUser(state.game.player, state.game.direction)

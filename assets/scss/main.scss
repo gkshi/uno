@@ -19,6 +19,10 @@ body {
   -moz-font-feature-settings: "liga" on;
 }
 
+*[hidden] {
+  display: none !important;
+}
+
 a {
   color: $color-light;
   text-decoration: underline;
@@ -33,4 +37,23 @@ a {
   border-radius: 4px;
   text-align: center;
   padding: 0 8px;
+}
+
+.attention {
+  color: $color-light;
+  background: linear-gradient(270deg, #8f59f7, #d00a41);
+  background-size: 400% 400%;
+  animation: attention .5s ease infinite;
+}
+
+@keyframes attention {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }

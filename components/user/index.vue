@@ -7,18 +7,19 @@
         :color="card.color"
         :value="card.value"
         :key="card.id"
-        :interactive="isInteractive(card)"
+        :interactive="isCardActive(card, activeCards)"
         @click="makeMove(card)")
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex'
 import mixinDeck from '@/mixins/deck'
+import mixinCards from '@/mixins/cards'
 import card from '@/components/card'
 
 export default {
   name: 'user-component',
-  mixins: [mixinDeck],
+  mixins: [mixinDeck, mixinCards],
   components: {
     card
   },
@@ -30,6 +31,9 @@ export default {
       user: 'user',
       lastTableCard: 'lastTableCard'
     }),
+    hand () {
+      return this.user.cards
+    },
     isActive () {
       return this.activePlayer === 'user'
     }
@@ -43,27 +47,8 @@ export default {
     }
   },
   methods: {
-    cardCanMakeMove (card) {
-      let is = false
-      if (this.lastTableCard.value && this.lastTableCard.value === card.value) {
-        is = true
-      }
-      if (this.lastTableCard.color === card.color) {
-        is = true
-      }
-      if (this.lastTableCard.type !== 'number' && this.lastTableCard.type === card.type) {
-        is = true
-      }
-      return is
-    },
-    isInteractive (card) {
-      if (!this.isActive) {
-        return false
-      }
-      return this.cardCanMakeMove(card)
-    },
     makeMove (card) {
-      if (!this.isInteractive(card)) {
+      if (!this.isCardActive(card, this.activeCards)) {
         return
       }
       this.$store.dispatch('makeMove', {
