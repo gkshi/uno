@@ -26,7 +26,8 @@ export default {
   computed: {
     ...mapState({
       activePlayer: state => state.game.player,
-      gameColor: state => state.game.color
+      gameColor: state => state.game.color,
+      gameAccumulative: state => state.game.accumulative
     }),
     ...mapGetters({
       user: 'user',
@@ -45,6 +46,10 @@ export default {
         // TODO: проверять, может ли юзер походить
         // и если нет, то выводить кнопку "взять карту" на deck
       }
+    },
+    activeCards () {
+      console.log('------')
+      console.log('user activeCards', this.activeCards)
     }
   },
   methods: {

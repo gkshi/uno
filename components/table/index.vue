@@ -8,14 +8,15 @@
         vButton(color="blue" @click="startGame") Играть
 
     template(v-else)
-      .flex.wrap
-        vCard(
-          v-for="card in cards"
-          :color="card.color"
-          :type="card.type"
-          :value="card.value"
-          :style="cardStyle(card._position)"
-          :key="card.id") {{ card.id }}
+      .relative.flex.center
+        .flex.wrap
+          vCard(
+            v-for="card in cards"
+            :color="card.color"
+            :type="card.type"
+            :value="card.value"
+            :style="cardStyle(card._position)"
+            :key="card.id") {{ card.id }}
 
       .direction(:class="gameDirection")
         iconArrow.arrow
@@ -77,10 +78,19 @@ export default {
     position: relative;
     width: 100%;
     height: 100%;
+    .relative {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 2;
+    }
     .direction {
       position: absolute;
       top: 0;
       left: 0;
+      z-index: 1;
       width: 100%;
       height: 100%;
       opacity: .5;

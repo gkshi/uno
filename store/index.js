@@ -105,12 +105,12 @@ export const actions = {
 
   restart ({ commit, dispatch }) {
     dispatch('updateGameStatus', 'not_ready')
+    commit('LOG_CLEAR')
     commit('RESTART')
     return dispatch('createDeck')
   },
 
   createDeck ({ commit, dispatch }) {
-    commit('LOG_CLEAR')
     return new Promise((resolve, reject) => {
       let generated = []
       let total = 0
@@ -189,9 +189,20 @@ export const actions = {
   },
 
   dealIntoTable ({ commit, state }) {
-    const card = state.deck[state.deck.length - 1]
+    let i = 1
+    let card = state.deck[state.deck.length - i]
+    // excluding black cards as first table card
+    while (card.color === 'black') {
+      i++
+      card = state.deck[state.deck.length - i]
+    }
+
     commit('TABLE_ADD', card)
     commit('DECK_POP')
+    commit('GAME_UPDATE', {
+      key: 'color',
+      value: card.color
+    })
   },
 
   analyzeLastTableCard ({ state, commit }, color) {
@@ -320,6 +331,7 @@ export const actions = {
 
   makeMove ({ commit, dispatch, state }, payload) {
     const card = state.players[payload.player].cards.find(i => i.id === payload.cardId)
+    console.log('payload.color', payload.color)
     if (card.color === 'black' && !payload.color) {
       dispatch('openModal', 'color_picker')
       commit('COLORPICKER_CARD_UPDATE', card.id)

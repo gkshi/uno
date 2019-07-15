@@ -67,6 +67,10 @@ export default {
       if (this.isActive) {
         this.think()
       }
+    },
+    activeCards () {
+      console.log('------')
+      console.log(this.data.id, 'activeCards', this.activeCards)
     }
   },
   methods: {
@@ -77,18 +81,27 @@ export default {
       console.log(this.data.id, 'choose card', card)
       return card
     },
+    chooseColor () {
+      const colors = ['red', 'green', 'blue', 'yellow']
+      console.log('color', colors[Math.floor(Math.random() * 4)])
+      return colors[Math.floor(Math.random() * 4)]
+    },
     think () {
-      const timeToThink = process.env.isDev ? '800' : Math.floor(Math.random() * (4000 - 1000 + 1)) + 1000
+      const timeToThink = process.env.isDev ? '1500' : Math.floor(Math.random() * (4000 - 1000 + 1)) + 1000
       this.timeout = setTimeout(() => {
         this.makeMove()
       }, timeToThink)
     },
     makeMove () {
       if (this.activeCards.length) {
-        this.$store.dispatch('makeMove', {
+        const options = {
           cardId: this.chooseCard().id,
           player: this.data.id
-        })
+        }
+        if (this.chooseCard().color === 'black') {
+          options.color = this.chooseColor()
+        }
+        this.$store.dispatch('makeMove', options)
       } else {
         if (this.gameAccumulative) {
           this.$store.dispatch('takeAccumulativeCards', this.data.id)
