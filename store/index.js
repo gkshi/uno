@@ -218,9 +218,11 @@ export const actions = {
       })
     }
     if (card.type === 'wild_draw_four' || card.type === 'draw_two') {
+      let count = state.game.accumulative ? state.game.accumulative : 0
+      count += card.type === 'wild_draw_four' ? 4 : 2
       commit('GAME_UPDATE', {
         key: 'accumulative',
-        value: card.type === 'wild_draw_four' ? 4 : 2
+        value: count
       })
     }
   },
@@ -320,18 +322,22 @@ export const actions = {
         key: 'status',
         value: 'finished'
       })
+      dispatch('openModal', 'finish')
     } else {
       // change turn
+      let nextUser = _getNextUser(state.game.player, state.game.direction)
+      if (card.type === 'skip') {
+        nextUser = _getNextUser(state.game.player, state.game.direction)
+      }
       commit('GAME_UPDATE', {
         key: 'player',
-        value: _getNextUser(state.game.player, state.game.direction)
+        value: nextUser
       })
     }
   },
 
   makeMove ({ commit, dispatch, state }, payload) {
     const card = state.players[payload.player].cards.find(i => i.id === payload.cardId)
-    console.log('payload.color', payload.color)
     if (card.color === 'black' && !payload.color) {
       dispatch('openModal', 'color_picker')
       commit('COLORPICKER_CARD_UPDATE', card.id)

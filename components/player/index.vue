@@ -67,27 +67,20 @@ export default {
       if (this.isActive) {
         this.think()
       }
-    },
-    activeCards () {
-      console.log('------')
-      console.log(this.data.id, 'activeCards', this.activeCards)
     }
   },
   methods: {
     chooseCard () {
       // TODO: write
-      console.log('this.activeCards', this.activeCards)
       const card = this.activeCards[0]
-      console.log(this.data.id, 'choose card', card)
       return card
     },
     chooseColor () {
       const colors = ['red', 'green', 'blue', 'yellow']
-      console.log('color', colors[Math.floor(Math.random() * 4)])
       return colors[Math.floor(Math.random() * 4)]
     },
     think () {
-      const timeToThink = process.env.isDev ? '1500' : Math.floor(Math.random() * (4000 - 1000 + 1)) + 1000
+      const timeToThink = process.env.isDev ? '1000' : Math.floor(Math.random() * (4000 - 1000 + 1)) + 1000
       this.timeout = setTimeout(() => {
         this.makeMove()
       }, timeToThink)

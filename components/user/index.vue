@@ -46,10 +46,6 @@ export default {
         // TODO: проверять, может ли юзер походить
         // и если нет, то выводить кнопку "взять карту" на deck
       }
-    },
-    activeCards () {
-      console.log('------')
-      console.log('user activeCards', this.activeCards)
     }
   },
   methods: {

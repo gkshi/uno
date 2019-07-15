@@ -5,8 +5,15 @@ export default {
     }
   },
   watch: {
-    activePlayer () {
-      console.log('<<<< new turn', this.gameAccumulative)
+    hand () {
+      if (this.isActive) {
+        this._updateActiveCards()
+      }
+    },
+    isActive () {
+      if (this.isActive) {
+        this._updateActiveCards()
+      }
     },
     lastTableCard () {
       this._updateActiveCards()
@@ -14,36 +21,38 @@ export default {
   },
   methods: {
     _updateActiveCards () {
-      console.log('------')
       this.activeCards = this.getActiveCards(this.hand)
     },
     _isCardFits (card) {
-      console.log('card', card)
       let is = false
       if (this.gameAccumulative) {
-        console.log('case 1', this.gameAccumulative)
-        if (this.gameColor === card.color || card.type === 'wild_draw_four') {
+        // +2 on +2
+        if (this.lastTableCard.type === 'draw_two' && this.lastTableCard.type === card.type) {
           is = true
         }
-        return
+        // +2 on +4
+        if (this.lastTableCard.type === 'wild_draw_four' && card.type === 'draw_two' && this.gameColor === card.color) {
+          is = true
+        }
+        // +4 on anything
+        if (card.type === 'wild_draw_four') {
+          is = true
+        }
+        return is
       }
       if (card.color === 'black') {
-        console.log('case 2')
         is = true
       }
       // Совпадение по цифре
       if (this.lastTableCard.value && this.lastTableCard.value === card.value) {
-        console.log('case 3')
         is = true
       }
       // Совпадение по цвету
       if (this.gameColor === card.color) {
-        console.log('case 4')
         is = true
       }
       // Совпадение по типу (reverse, skip)
       if (this.lastTableCard.type !== 'number' && this.lastTableCard.type === card.type) {
-        console.log('case 5')
         is = true
       }
       return is

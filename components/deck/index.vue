@@ -30,7 +30,8 @@ export default {
   computed: {
     ...mapState({
       deck: state => state.deck,
-      activePlayer: state => state.game.player
+      activePlayer: state => state.game.player,
+      gameAccumulative: state => state.game.accumulative
     }),
     ...mapGetters({
       cardsInDeck: 'cardsInDeck'

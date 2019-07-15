@@ -1,5 +1,5 @@
 <template lang="pug">
-  .modal-component.flex.center(v-if="show")
+  .modal-component.flex.center(v-if="show" :class="{ 'bg': withBg }")
     dialog(:open="show")
       slot
 </template>
@@ -13,7 +13,8 @@ export default {
     id: {
       type: String,
       default: Math.random().toFixed(7).slice(2)
-    }
+    },
+    withBg: Boolean
   },
   computed: {
     ...mapState({
@@ -39,6 +40,12 @@ export default {
       border: none;
       background: transparent;
       padding: 0;
+    }
+    &.bg {
+      dialog {
+        background: $color-light;
+        padding: 20px;
+      }
     }
   }
 </style>

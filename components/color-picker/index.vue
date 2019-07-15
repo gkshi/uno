@@ -25,7 +25,6 @@ export default {
   },
   methods: {
     makeMove (color) {
-      console.log('make move', color)
       this.$store.dispatch('makeMove', {
         cardId: this.colorPickerCard,
         player: this.activePlayer,
