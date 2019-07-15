@@ -9,26 +9,48 @@ const playersMap = new Map([
 ])
 
 function _getNextUser (player, direction) {
-  // TODO: проверять направление
-  if (!player) {
-    return 'user'
-  }
+  const randomIndex = Math.floor(Math.random() * playersMap.size) + 1
+  let previousPlayer = null
+  let needPlayer = null
   let hasFound = false
-  let needUser = null
-  // let previous = null
   let i = 1
   for (let key of playersMap.keys()) {
-    if (hasFound && !needUser) {
-      needUser = key
-    } else if (key === player) {
-      hasFound = true
-      if (i === playersMap.size) {
-        needUser = playersMap.keys().next().value
-      }
+    // get first random player
+    if (!player && i === randomIndex) {
+      needPlayer = key
+      break
     }
+    if (hasFound) {
+      needPlayer = key
+      break
+    }
+    // clockwise direction search
+    if (key === player && direction === 'clockwise') {
+      hasFound = true
+    }
+    if (key === player && direction === 'counterclockwise') {
+      needPlayer = previousPlayer
+      // get the last one player
+      if (!previousPlayer) {
+        let j = 1
+        for (let key of playersMap.keys()) {
+          if (j === playersMap.size) {
+            needPlayer = key
+            break
+          }
+          j++
+        }
+      }
+      break
+    }
+    if (i >= playersMap.size) {
+      needPlayer = playersMap.keys().next().value
+      break
+    }
+    previousPlayer = key
     i++
   }
-  return needUser
+  return needPlayer
 }
 
 export const state = () => ({
@@ -321,6 +343,7 @@ export const mutations = {
     state.table = []
     state.game.status = 'not_ready'
     state.game.player = null
+    state.game.direction = 'clockwise'
     state.game.turn = 0
     Object.keys(state.players).forEach(key => {
       state.players[key].cards = []

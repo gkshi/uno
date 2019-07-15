@@ -95,6 +95,9 @@ export default {
           transform: translate(0, -50%) rotate(180deg);
         }
       }
+      &.counterclockwise {
+        transform: scaleY(-1);
+      }
     }
   }
 </style>
