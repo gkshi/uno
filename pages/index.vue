@@ -26,6 +26,8 @@
           gameUser
         .cell.flex.a-center.right
           vButton.uno-button(v-if="gameStatus === 'in_progress'" @click="sayUno") uno
+
+    colorPicker
 </template>
 
 <script>
@@ -39,6 +41,7 @@ import gameUser from '@/components/user'
 import gameLogs from '@/components/logs'
 import gameMonitoring from '@/components/monitoring'
 import vButton from '@/components/button'
+import colorPicker from '@/components/color-picker'
 
 export default {
   name: 'index-page',
@@ -50,7 +53,8 @@ export default {
     gameUser,
     gameLogs,
     gameMonitoring,
-    vButton
+    vButton,
+    colorPicker
   },
   computed: {
     ...mapState({

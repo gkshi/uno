@@ -46,6 +46,7 @@ export default {
   computed: {
     ...mapState({
       activePlayer: state => state.game.player,
+      gameColor: state => state.game.color,
       gameAccumulative: state => state.game.accumulative
     }),
     ...mapGetters({
@@ -71,6 +72,7 @@ export default {
   methods: {
     chooseCard () {
       // TODO: write
+      console.log('this.activeCards', this.activeCards)
       const card = this.activeCards[0]
       console.log(this.data.id, 'choose card', card)
       return card

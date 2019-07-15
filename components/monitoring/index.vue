@@ -5,6 +5,7 @@
     div accumulative: {{ accumulative || 'null' }}
     div gameStatus: {{ gameStatus }}
     div activePlayer: {{ activePlayer || '-' }}
+    div colorPickerCard: {{ colorPickerCard || 'null' }}
 </template>
 
 <script>
@@ -18,7 +19,8 @@ export default {
       direction: state => state.game.direction,
       accumulative: state => state.game.accumulative,
       gameStatus: state => state.game.status,
-      activePlayer: state => state.game.player
+      activePlayer: state => state.game.player,
+      colorPickerCard: state => state._colorPickerCard
     })
   }
 }

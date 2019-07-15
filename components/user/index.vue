@@ -25,7 +25,8 @@ export default {
   },
   computed: {
     ...mapState({
-      activePlayer: state => state.game.player
+      activePlayer: state => state.game.player,
+      gameColor: state => state.game.color
     }),
     ...mapGetters({
       user: 'user',

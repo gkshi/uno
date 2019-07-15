@@ -22,7 +22,7 @@ export default {
           is = true
         }
         // Совпадение по цвету
-        if (this.lastTableCard.color === card.color) {
+        if (this.gameColor === card.color) {
           is = true
         }
         // Черные карты
@@ -49,7 +49,7 @@ export default {
       return is
     }
   },
-  moutned () {
+  mounted () {
     this._updateActiveCards()
   }
 }

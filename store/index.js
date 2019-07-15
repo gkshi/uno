@@ -17,7 +17,8 @@ function _getNextUser (player, direction) {
   for (let key of playersMap.keys()) {
     // get first random player
     if (!player && i === randomIndex) {
-      needPlayer = key
+      // TODO: user's turn at first
+      needPlayer = 'user' // key
       break
     }
     if (hasFound) {
@@ -95,7 +96,9 @@ export const state = () => ({
   },
   deck: [],
   table: [],
-  logs: []
+  logs: [],
+  modal: null,
+  _colorPickerCard: null
 })
 
 export const actions = {
@@ -185,21 +188,17 @@ export const actions = {
     commit('DEAL', getters.player(playerId))
   },
 
-  dealIntoTable ({ commit, dispatch, state }) {
+  dealIntoTable ({ commit, state }) {
     const card = state.deck[state.deck.length - 1]
     commit('TABLE_ADD', card)
     commit('DECK_POP')
-
-    // TODO: update game color here
-    // TODO: check game direction here
-    // dispatch('analyzeLastTableCard')
   },
 
-  analyzeLastTableCard ({ state, commit }) {
+  analyzeLastTableCard ({ state, commit }, color) {
     const card = state.table[state.table.length - 1]
     commit('GAME_UPDATE', {
       key: 'color',
-      value: card.color
+      value: color || card.color
     })
     if (card.type === 'reverse') {
       commit('GAME_UPDATE', {
@@ -280,10 +279,13 @@ export const actions = {
 
   /**
    * Make move
-   * @param payload { cardId, player }
+   * @param payload { cardId, player, color }
    */
-  makeMove ({ commit, dispatch, state }, payload) {
+  _makeMove ({ commit, dispatch, state }, payload) {
     const card = state.players[payload.player].cards.find(i => i.id === payload.cardId)
+
+    // remove temporary color picker card
+    commit('COLORPICKER_CARD_UPDATE', null)
 
     // add card on the table
     commit('CARD_UPDATE', card)
@@ -291,7 +293,7 @@ export const actions = {
 
     // TODO: update game color here
     // TODO: check game direction here
-    dispatch('analyzeLastTableCard')
+    dispatch('analyzeLastTableCard', payload.color)
 
     // update player hand
     commit('PLAYER_UPDATE', {
@@ -314,6 +316,23 @@ export const actions = {
         value: _getNextUser(state.game.player, state.game.direction)
       })
     }
+  },
+
+  makeMove ({ commit, dispatch, state }, payload) {
+    const card = state.players[payload.player].cards.find(i => i.id === payload.cardId)
+    if (card.color === 'black' && !payload.color) {
+      dispatch('openModal', 'color_picker')
+      commit('COLORPICKER_CARD_UPDATE', card.id)
+    } else {
+      dispatch('_makeMove', payload)
+    }
+  },
+
+  openModal ({ commit }, modalId) {
+    commit('MODAL_UPDATE', modalId)
+  },
+  closeModal ({ commit }) {
+    commit('MODAL_UPDATE', null)
   }
 
 }
@@ -374,6 +393,14 @@ export const mutations = {
 
   TABLE_ADD (state, card) {
     state.table.push(card)
+  },
+
+  MODAL_UPDATE (state, id) {
+    state.modal = id
+  },
+
+  COLORPICKER_CARD_UPDATE (state, card) {
+    state._colorPickerCard = card
   }
 }
 
