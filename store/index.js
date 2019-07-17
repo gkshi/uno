@@ -8,7 +8,7 @@ const playersMap = new Map([
   ['bot3']
 ])
 
-function _getNextUser (player, direction) {
+function _getNextPlayer (player, direction) {
   const randomIndex = Math.floor(Math.random() * playersMap.size) + 1
   let previousPlayer = null
   let needPlayer = null
@@ -62,6 +62,7 @@ export const state = () => ({
       name: 'Jack',
       photo: '/users/jack.png',
       cards: [],
+      _lastCard: null,
       el: null
     },
     bot2: {
@@ -70,6 +71,7 @@ export const state = () => ({
       name: 'Sasha',
       photo: '/users/sasha.png',
       cards: [],
+      _lastCard: null,
       el: null
     },
     user: {
@@ -77,6 +79,7 @@ export const state = () => ({
       type: 'user',
       cards: [],
       activeCards: null,
+      _lastCard: null,
       el: null
     },
     bot3: {
@@ -85,6 +88,7 @@ export const state = () => ({
       name: 'Mary',
       photo: '/users/mary.png',
       cards: [],
+      _lastCard: null,
       el: null
     }
   },
@@ -99,7 +103,8 @@ export const state = () => ({
   table: [],
   logs: [],
   modal: null,
-  _colorPickerCard: null
+  _colorPickerCard: null,
+  _gotDeckCard: null
 })
 
 export const actions = {
@@ -108,6 +113,7 @@ export const actions = {
     dispatch('updateGameStatus', 'not_ready')
     commit('LOG_CLEAR')
     commit('RESTART')
+    commit('MODAL_UPDATE', null)
     return dispatch('createDeck')
   },
 
@@ -251,14 +257,8 @@ export const actions = {
     })
   },
 
-  nextTurn ({ commit, state }) {
-    commit('GAME_UPDATE', {
-      key: 'player',
-      value: _getNextUser(state.game.player, state.game.direction)
-    })
-  },
-
   _takeCardFromDeck ({ commit, state, getters }, playerId) {
+    // dispatch
     commit('PLAYER_UPDATE', {
       player: playerId,
       key: 'cards',
@@ -267,14 +267,13 @@ export const actions = {
     commit('DECK_POP')
   },
 
-  takeCardFromDeck ({ dispatch, commit, state }, playerId) {
-    // TODO: сделать проверку на черные карты.
-    // Давать юзеру ходить любой картой в первый ход
-    dispatch('_takeCardFromDeck', playerId)
-    commit('GAME_UPDATE', {
-      key: 'player',
-      value: _getNextUser(state.game.player, state.game.direction)
+  takeCardFromDeck ({ dispatch, commit, getters, state }, playerId) {
+    commit('PLAYER_UPDATE', {
+      player: playerId,
+      key: '_lastCard',
+      value: getters.lastDeckCard
     })
+    dispatch('_takeCardFromDeck', playerId)
   },
 
   takeAccumulativeCards ({ commit, dispatch, state }, playerId) {
@@ -285,9 +284,16 @@ export const actions = {
       key: 'accumulative',
       value: null
     })
+    dispatch('nextTurn')
+  },
+
+  nextTurn ({ commit, state }, playerId) {
+    if (!playerId) {
+      playerId = state.game.player
+    }
     commit('GAME_UPDATE', {
       key: 'player',
-      value: _getNextUser(state.game.player, state.game.direction)
+      value: _getNextPlayer(playerId, state.game.direction)
     })
   },
 
@@ -300,6 +306,12 @@ export const actions = {
 
     // remove temporary color picker card
     commit('COLORPICKER_CARD_UPDATE', null)
+    // remove temporary player last card
+    commit('PLAYER_UPDATE', {
+      player: payload.player,
+      key: '_lastCard',
+      value: null
+    })
 
     // add card on the table
     commit('CARD_UPDATE', card)
@@ -326,9 +338,9 @@ export const actions = {
       dispatch('openModal', 'finish')
     } else {
       // change turn
-      let nextUser = _getNextUser(state.game.player, state.game.direction)
+      let nextUser = _getNextPlayer(state.game.player, state.game.direction)
       if (card.type === 'skip') {
-        nextUser = _getNextUser(nextUser, state.game.direction)
+        nextUser = _getNextPlayer(nextUser, state.game.direction)
       }
       commit('GAME_UPDATE', {
         key: 'player',

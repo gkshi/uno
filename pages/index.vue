@@ -32,13 +32,17 @@
 
     // modals
     colorPicker
+    gotDeckCard
 
-    vModal(id="finish")
+    vModal(id="finish" with-bg)
       .flex.column.center
         div Game ended.
-        div The winner is {{ activePlayer }}.
         div
-          a(href="#" @click.prevent="restart") Restart
+          span The winner is&nbsp;
+          strong {{ activePlayer }}
+          span .
+        div
+          vButton(@click="restart") Restart
 
     // dev only: deal card modal
     vModal(v-if="isDev" id="deal_card" with-bg closing)
@@ -78,6 +82,7 @@ import gameLogs from '@/components/logs'
 import gameMonitoring from '@/components/monitoring'
 import vButton from '@/components/button'
 import colorPicker from '@/components/color-picker'
+import gotDeckCard from '@/components/got-deck-card'
 import vModal from '@/components/modal'
 
 export default {
@@ -92,6 +97,7 @@ export default {
     gameMonitoring,
     vButton,
     colorPicker,
+    gotDeckCard,
     vModal
   },
   computed: {

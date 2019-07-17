@@ -52,6 +52,9 @@ export default {
     ...mapGetters({
       lastTableCard: 'lastTableCard'
     }),
+    lastCard () {
+      return this.data._lastCard
+    },
     hand () {
       return this.data.cards
     },
@@ -63,9 +66,25 @@ export default {
     }
   },
   watch: {
+    'data.cards' () {
+      if (!this.data.cards.length) {
+        clearTimeout(this.timeout)
+      }
+    },
     activePlayer () {
       if (this.isActive) {
         this.think()
+      }
+    },
+    lastCard () {
+      if (this.lastCard) {
+        if (this._isCardFits(this.lastCard)) {
+          console.log('bot: last card fits')
+          this.chooseActionForTakenCard()
+        } else {
+          console.log('bot: keep card, next turn')
+          this.$store.dispatch('nextTurn')
+        }
       }
     }
   },
@@ -80,18 +99,19 @@ export default {
       return colors[Math.floor(Math.random() * 4)]
     },
     think () {
-      const timeToThink = process.env.isDev ? '2000' : Math.floor(Math.random() * (4000 - 1000 + 1)) + 1000
+      const timeToThink = process.env.isDev ? '800' : Math.floor(Math.random() * (4000 - 1000 + 1)) + 1000
       this.timeout = setTimeout(() => {
         this.makeMove()
       }, timeToThink)
     },
     makeMove () {
       if (this.activeCards.length) {
+        const card = this.chooseCard()
         const options = {
-          cardId: this.chooseCard().id,
+          cardId: card.id,
           player: this.data.id
         }
-        if (this.chooseCard().color === 'black') {
+        if (card.color === 'black') {
           options.color = this.chooseColor()
         }
         this.$store.dispatch('makeMove', options)
@@ -102,6 +122,14 @@ export default {
           this.$store.dispatch('takeCardFromDeck', this.data.id)
         }
       }
+    },
+    chooseActionForTakenCard () {
+      // TODO: сделать выбор между ходом и тем, чтобы оставить карту
+      // пока просто ход
+      this.$store.dispatch('makeMove', {
+        cardId: this.lastCard.id,
+        player: this.data.id
+      })
     }
   },
   mounted () {

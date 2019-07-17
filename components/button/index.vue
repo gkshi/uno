@@ -15,6 +15,16 @@ export default {
 }
 </script>
 
+<style lang="scss">
+  .buttons {
+    .button-component {
+      &:not(:last-child) {
+        margin-right: 20px;
+      }
+    }
+  }
+</style>
+
 <style lang="scss" scoped>
   .button-component {
     cursor: pointer;

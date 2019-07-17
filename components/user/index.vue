@@ -27,7 +27,8 @@ export default {
     ...mapState({
       activePlayer: state => state.game.player,
       gameColor: state => state.game.color,
-      gameAccumulative: state => state.game.accumulative
+      gameAccumulative: state => state.game.accumulative,
+      lastCard: state => state.players.user._lastCard
     }),
     ...mapGetters({
       user: 'user',
@@ -45,6 +46,15 @@ export default {
       if (this.isActive) {
         // TODO: проверять, может ли юзер походить
         // и если нет, то выводить кнопку "взять карту" на deck
+      }
+    },
+    lastCard () {
+      if (this.lastCard) {
+        if (this._isCardFits(this.lastCard)) {
+          this.$store.dispatch('openModal', 'got_deck_card')
+        } else {
+          this.$store.dispatch('nextTurn')
+        }
       }
     }
   },
