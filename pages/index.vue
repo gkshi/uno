@@ -41,7 +41,7 @@
           a(href="#" @click.prevent="restart") Restart
 
     // dev only: deal card modal
-    vModal(v-if="isDev" id="deal_card" with-bg)
+    vModal(v-if="isDev" id="deal_card" with-bg closing)
       div
         div Deal card
         div
@@ -54,6 +54,7 @@
             option(value="wild_draw_four") wild_draw_four
             option(value="wild") wild
             option(value="draw_two") draw_two
+            option(value="skip") skip
         div
           span card color:
           select(ref="deal_color")

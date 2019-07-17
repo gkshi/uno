@@ -327,7 +327,7 @@ export const actions = {
       // change turn
       let nextUser = _getNextUser(state.game.player, state.game.direction)
       if (card.type === 'skip') {
-        nextUser = _getNextUser(state.game.player, state.game.direction)
+        nextUser = _getNextUser(nextUser, state.game.direction)
       }
       commit('GAME_UPDATE', {
         key: 'player',
