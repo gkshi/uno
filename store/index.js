@@ -76,6 +76,7 @@ export const state = () => ({
       id: 'user',
       type: 'user',
       cards: [],
+      activeCards: null,
       el: null
     },
     bot3: {
@@ -344,6 +345,14 @@ export const actions = {
     } else {
       dispatch('_makeMove', payload)
     }
+  },
+
+  updateUserActiveCard ({ commit }, activeCards) {
+    commit('PLAYER_UPDATE', {
+      player: 'user',
+      key: 'activeCards',
+      value: activeCards
+    })
   },
 
   openModal ({ commit }, modalId) {

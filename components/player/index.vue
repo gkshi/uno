@@ -80,7 +80,7 @@ export default {
       return colors[Math.floor(Math.random() * 4)]
     },
     think () {
-      const timeToThink = process.env.isDev ? '1000' : Math.floor(Math.random() * (4000 - 1000 + 1)) + 1000
+      const timeToThink = process.env.isDev ? '2000' : Math.floor(Math.random() * (4000 - 1000 + 1)) + 1000
       this.timeout = setTimeout(() => {
         this.makeMove()
       }, timeToThink)

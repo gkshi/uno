@@ -17,6 +17,9 @@ export default {
     },
     lastTableCard () {
       this._updateActiveCards()
+    },
+    activeCards () {
+      this.$store.dispatch('updateUserActiveCard', this.activeCards.length)
     }
   },
   methods: {

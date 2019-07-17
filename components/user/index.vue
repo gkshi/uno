@@ -7,7 +7,7 @@
         :color="card.color"
         :value="card.value"
         :key="card.id"
-        :interactive="isCardActive(card, activeCards)"
+        :interactive="isCardInteractive(card)"
         @click="makeMove(card)")
 </template>
 
@@ -49,8 +49,11 @@ export default {
     }
   },
   methods: {
+    isCardInteractive (card) {
+      return this.isActive && this.isCardActive(card, this.activeCards)
+    },
     makeMove (card) {
-      if (!this.isCardActive(card, this.activeCards)) {
+      if (!this.isCardInteractive(card)) {
         return
       }
       this.$store.dispatch('makeMove', {

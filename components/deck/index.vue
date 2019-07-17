@@ -1,6 +1,6 @@
 <template lang="pug">
-  .deck-component.flex.a-end
-    .action.flex.a-center(:hidden.prop="activePlayer !== 'user'")
+  .deck-component.flex.a-end(:class="{ 'no-pointer-events': !isUserActive }")
+    .action.flex.a-center(:class="{ 'show': showButton }")
       vButton(@click="takeCard") Взять
     .deck.flex(ref="deck")
       gameCard(
@@ -34,8 +34,18 @@ export default {
       gameAccumulative: state => state.game.accumulative
     }),
     ...mapGetters({
-      cardsInDeck: 'cardsInDeck'
-    })
+      cardsInDeck: 'cardsInDeck',
+      player: 'player'
+    }),
+    isUserActive () {
+      return this.activePlayer === 'user'
+    },
+    showButton () {
+      return this.isUserActive && this.userActiveCards < 1
+    },
+    userActiveCards () {
+      return this.player('user').activeCards
+    }
   },
   methods: {
     takeCard () {
@@ -61,9 +71,6 @@ export default {
       min-height: 100px;
       margin-right: 10px;
       overflow: hidden;
-      &.hidden {
-        opacity: 0;
-      }
     }
     .action {
       position: absolute;
@@ -75,6 +82,10 @@ export default {
       padding-left: 34px;
       opacity: 0;
       visibility: hidden;
+      &.show {
+        opacity: 1;
+        visibility: visible;
+      }
     }
     &:hover {
       .action {
