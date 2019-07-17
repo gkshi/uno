@@ -79,10 +79,8 @@ export default {
     lastCard () {
       if (this.lastCard) {
         if (this._isCardFits(this.lastCard)) {
-          console.log('bot: last card fits')
           this.chooseActionForTakenCard()
         } else {
-          console.log('bot: keep card, next turn')
           this.$store.dispatch('nextTurn')
         }
       }

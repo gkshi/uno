@@ -20,10 +20,10 @@ export default {
   },
   computed: {
     ...mapState({
-      modal: state => state.modal
+      modals: state => state.modals
     }),
     show () {
-      return this.id === this.modal
+      return this.modals.includes(this.id)
     }
   },
   methods: {

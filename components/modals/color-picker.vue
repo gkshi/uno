@@ -10,7 +10,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import vModal from '@/components/modal'
+import vModal from '@/components/modals/modal'
 
 export default {
   name: 'color-picker-component',

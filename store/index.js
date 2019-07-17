@@ -102,7 +102,7 @@ export const state = () => ({
   deck: [],
   table: [],
   logs: [],
-  modal: null,
+  modals: [],
   _colorPickerCard: null,
   _gotDeckCard: null
 })
@@ -113,7 +113,7 @@ export const actions = {
     dispatch('updateGameStatus', 'not_ready')
     commit('LOG_CLEAR')
     commit('RESTART')
-    commit('MODAL_UPDATE', null)
+    commit('MODAL_CLOSE_ALL')
     return dispatch('createDeck')
   },
 
@@ -352,8 +352,8 @@ export const actions = {
   makeMove ({ commit, dispatch, state }, payload) {
     const card = state.players[payload.player].cards.find(i => i.id === payload.cardId)
     if (card.color === 'black' && !payload.color) {
-      dispatch('openModal', 'color_picker')
       commit('COLORPICKER_CARD_UPDATE', card.id)
+      dispatch('openModal', 'color_picker')
     } else {
       dispatch('_makeMove', payload)
     }
@@ -367,11 +367,11 @@ export const actions = {
     })
   },
 
-  openModal ({ commit }, modalId) {
-    commit('MODAL_UPDATE', modalId)
+  openModal ({ commit, state }, modalId) {
+    commit('MODAL_OPEN', modalId)
   },
-  closeModal ({ commit }) {
-    commit('MODAL_UPDATE', null)
+  closeModal ({ commit, state }, modalId) {
+    commit('MODAL_CLOSE', modalId)
   }
 
 }
@@ -434,8 +434,16 @@ export const mutations = {
     state.table.push(card)
   },
 
-  MODAL_UPDATE (state, id) {
-    state.modal = id
+  MODAL_OPEN (state, id) {
+    state.modals.push(id)
+  },
+
+  MODAL_CLOSE (state, id) {
+    state.modals = state.modals.filter(i => i !== id)
+  },
+
+  MODAL_CLOSE_ALL (state) {
+    state.modals = []
   },
 
   COLORPICKER_CARD_UPDATE (state, card) {
