@@ -12,6 +12,7 @@
         .flex.wrap
           vCard(
             v-for="card in cards"
+            :id="card.id"
             :color="card.color"
             :type="card.type"
             :value="card.value"
@@ -47,7 +48,7 @@ export default {
   },
   methods: {
     cardStyle (position) {
-      return position ? `position: absolute; top: ${position.top}; left: ${position.left}; transform: rotate(${position.angle});` : ''
+      return position ? `position: fixed; top: ${position.top}; left: ${position.left}; transform: rotate(${position.angle});` : ''
     },
     startGame () {
       this.dealFirstHands()

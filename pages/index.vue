@@ -4,14 +4,15 @@
       .row.flex.top
         .cell.left
           gameDeck
+          gameStatus
         .cell.flex.j-center.middle
           gamePlayer(:data="players.bot1")
         .cell.flex.j-end.right
           div
-            a(href="#" @click.prevent="restart") restart
+            a(href="#" @click.prevent="restart") Заново
             template(v-if="isDev")
               span &nbsp;
-              a(href="#" @click.prevent="openModal('deal_card')") deal card
+              a(href="#" @click.prevent="openModal('deal_card')") Deal card
 
       .row.flex.middle
         .cell.flex.a-center.left
@@ -23,13 +24,14 @@
 
       .row.flex.bottom
         .cell.flex.a-end.left
-          // gameLogs
-          gameMonitoring
+          gameLogs
+          // gameMonitoring
         .cell.flex.a-end.middle
           gameUser
         .cell.flex.a-center.right
-          vButton.uno-button(v-if="gameStatus === 'in_progress'" @click="sayUno") uno
+          vButton.uno-button(v-if="game.status === 'in_progress'" @click="sayUno") uno
 
+    // eventNotification
     // modals
     gameModals
 </template>
@@ -38,6 +40,7 @@
 import { mapState } from 'vuex'
 import mixinDeck from '@/mixins/deck'
 import gameDeck from '@/components/deck'
+import gameStatus from '@/components/status'
 import logMessages from '@/constants/logs'
 import gamePlayer from '@/components/player'
 import gameTable from '@/components/table'
@@ -46,28 +49,46 @@ import gameLogs from '@/components/logs'
 import gameMonitoring from '@/components/monitoring'
 import vButton from '@/components/button'
 import gameModals from '@/components/modals'
+import eventNotification from '@/components/notification'
 
 export default {
   name: 'index-page',
   mixins: [mixinDeck],
   components: {
     gameDeck,
+    gameStatus,
     gamePlayer,
     gameTable,
     gameUser,
     gameLogs,
     gameMonitoring,
     vButton,
-    gameModals
+    gameModals,
+    eventNotification
   },
   computed: {
     ...mapState({
       players: state => state.players,
-      gameStatus: state => state.game.status,
-      logs: state => state.logs
+      game: state => state.game,
+      table: state => state.table
     }),
     isDev () {
       return process.env.isDev
+    }
+  },
+  watch: {
+    'game.player' () {
+      if (this.table.length > 1) {
+        const lastCard = this.table[this.table.length - 1]
+        this.$store.dispatch('log', this.$t('turn_finish', {
+          player: this.game.player,
+          card: lastCard.value || lastCard.type,
+          color: lastCard.color
+        }))
+      }
+      if (this.game.player) {
+        this.$store.dispatch('log', this.$t('turn_start', { player: this.game.player === 'user' ? this.$t('you') : this.players[this.game.player].name }))
+      }
     }
   },
   methods: {

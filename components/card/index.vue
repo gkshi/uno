@@ -3,7 +3,8 @@
     :class="classList"
     @mouseenter="enter"
     @mouseleave="leave"
-    @click="click")
+    @click="click"
+    :data-card="id")
     .card(:class="cardClass")
       .front
         .content.flex.center
@@ -32,6 +33,10 @@ export default {
     icon
   },
   props: {
+    id: {
+      type: Number,
+      required: true
+    },
     color: {
       type: String,
       required: true
@@ -94,6 +99,9 @@ export default {
     click () {
       if (process.env.isDev) {
         console.log(this.color, this.type, this.value)
+      }
+      if (this.$el.dataset.hasOwnProperty('animation')) {
+        return
       }
       this.$emit('click')
     }
@@ -163,7 +171,7 @@ export default {
             top: 0;
             left: 0;
             z-index: 0;
-            background: url('/card.svg') no-repeat center;
+            background: url('/uno/card.svg') no-repeat center;
             background-size: cover;
             display: block;
             width: 100%;
@@ -264,7 +272,15 @@ export default {
 
   &.hover {
     transform: translate(0, -14px);
-    /*z-index: 1;*/
+  }
+
+  &[data-animation="true"] {
+    transition: all .5s ease;
+    z-index: 800;
+    .card {
+      transition: all 1s ease;
+      z-index: 800;
+    }
   }
 }
 </style>

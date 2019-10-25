@@ -1,13 +1,15 @@
 <template lang="pug">
-  .player-component.flex(:class="{ inversed }")
+  .player-component.flex(:class="{ inversed, 'active': isActive }")
     .info
-      .photo(:class="{ 'active': isActive }")
+      iconPointer.pointer
+      .photo
         img(:src="data.photo")
       .label.name {{ data.name }}
     .hand
       .cards.flex(ref="hand")
         card.card(
           v-for="card in hand"
+          :id="card.id"
           :hidden="false"
           size="small"
           :type="card.type"
@@ -24,12 +26,14 @@ import { mapState, mapGetters } from 'vuex'
 import mixinDeck from '@/mixins/deck'
 import mixinCards from '@/mixins/cards'
 import card from '@/components/card'
+import iconPointer from '@/components/icons/arrow-pointer'
 
 export default {
   name: 'player-component',
   mixins: [mixinDeck, mixinCards],
   components: {
-    card
+    card,
+    iconPointer
   },
   props: {
     data: {
@@ -47,7 +51,8 @@ export default {
     ...mapState({
       activePlayer: state => state.game.player,
       gameColor: state => state.game.color,
-      gameAccumulative: state => state.game.accumulative
+      gameAccumulative: state => state.game.accumulative,
+      deckCard: state => state._gotDeckCard
     }),
     ...mapGetters({
       lastTableCard: 'lastTableCard'
@@ -78,17 +83,22 @@ export default {
     },
     lastCard () {
       if (this.lastCard) {
+        console.log('last card taken')
         if (this._isCardFits(this.lastCard)) {
           this.chooseActionForTakenCard()
         } else {
+          console.log('next turn')
           this.$store.dispatch('nextTurn')
         }
       }
+    },
+    deckCard () {
+      console.log('deckCard', this.deckCard)
     }
   },
   methods: {
     chooseCard () {
-      // TODO: write
+      // TODO: написать алгоритм выбора карты для хода
       const card = this.activeCards[0]
       return card
     },
@@ -97,7 +107,7 @@ export default {
       return colors[Math.floor(Math.random() * 4)]
     },
     think () {
-      const timeToThink = process.env.isDev ? '800' : Math.floor(Math.random() * (4000 - 1000 + 1)) + 1000
+      const timeToThink = /* process.env.isDev ? 500 : */Math.floor(Math.random() * (3000 - 500 + 1)) + 500
       this.timeout = setTimeout(() => {
         this.makeMove()
       }, timeToThink)
@@ -118,15 +128,20 @@ export default {
           this.$store.dispatch('takeAccumulativeCards', this.data.id)
         } else {
           this.$store.dispatch('takeCardFromDeck', this.data.id)
+          // TODO: fix
         }
       }
     },
     chooseActionForTakenCard () {
+      console.log('делаем выбор для взятой карты')
       // TODO: сделать выбор между ходом и тем, чтобы оставить карту
       // пока просто ход
-      this.$store.dispatch('makeMove', {
-        cardId: this.lastCard.id,
-        player: this.data.id
+      console.log('просто ход')
+      this.$nextTick(() => {
+        this.$store.dispatch('makeMove', {
+          cardId: this.lastCard.id,
+          player: this.data.id
+        })
       })
     }
   },
@@ -142,10 +157,21 @@ export default {
 }
 </script>
 
+<style lang="scss">
+  .player-component {
+    .pointer {
+      .fill {
+        fill: $color-focus;
+      }
+    }
+  }
+</style>
+
 <style lang="scss" scoped>
   $margin: 10px;
   .player-component {
     .info {
+      position: relative;
       margin-right: $margin;
     }
     .photo {
@@ -164,9 +190,6 @@ export default {
         object-fit: cover;
         object-position: center;
         border-radius: 2px;
-      }
-      &.active {
-        box-shadow: 0 0 40px 0 #FFFFFF;
       }
     }
     .count {
@@ -189,6 +212,15 @@ export default {
       font-weight: $font-weight-bold;
     }
 
+    .pointer {
+      display: none;
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      z-index: 10;
+      transform: translate(-50%, -100%);
+    }
+
     &.inversed {
       flex-direction: row-reverse;
       .info {
@@ -200,6 +232,32 @@ export default {
         .flex {
           justify-content: inherit;
         }
+      }
+    }
+
+    &.active {
+      .pointer {
+        display: block;
+        animation: updown 1s ease infinite;
+      }
+      .photo {
+        border-color: $color-focus;
+        // box-shadow: 0 0 40px 0 #FFFFFF;
+      }
+      .label.name {
+        background: $color-focus;
+      }
+    }
+
+    @keyframes updown {
+      from {
+        transform: translate(-50%, -100%);
+      }
+      50% {
+        transform: translate(-50%, -140%);
+      }
+      to {
+        transform: translate(-50%, -100%);
       }
     }
   }

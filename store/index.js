@@ -60,7 +60,7 @@ export const state = () => ({
       id: 'bot1',
       type: 'bot',
       name: 'Jack',
-      photo: '/users/jack.png',
+      photo: '/uno/users/jack.png',
       cards: [],
       _lastCard: null,
       el: null
@@ -69,7 +69,7 @@ export const state = () => ({
       id: 'bot2',
       type: 'bot',
       name: 'Sasha',
-      photo: '/users/sasha.png',
+      photo: '/uno/users/sasha.png',
       cards: [],
       _lastCard: null,
       el: null
@@ -86,7 +86,7 @@ export const state = () => ({
       id: 'bot3',
       type: 'bot',
       name: 'Mary',
-      photo: '/users/mary.png',
+      photo: '/uno/users/mary.png',
       cards: [],
       _lastCard: null,
       el: null
@@ -102,6 +102,7 @@ export const state = () => ({
   deck: [],
   table: [],
   logs: [],
+  notification: null,
   modals: [],
   _colorPickerCard: null,
   _gotDeckCard: null
@@ -212,11 +213,15 @@ export const actions = {
     })
   },
 
-  analyzeLastTableCard ({ state, commit }, color) {
+  analyzeLastTableCard ({ dispatch, state, commit }, color) {
     const card = state.table[state.table.length - 1]
     commit('GAME_UPDATE', {
       key: 'color',
       value: color || card.color
+    })
+    dispatch('notify', {
+      type: 'color',
+      data: color || card.color
     })
     if (card.type === 'reverse') {
       commit('GAME_UPDATE', {
@@ -250,6 +255,13 @@ export const actions = {
     })
   },
 
+  notify ({ commit }, payload) {
+    commit('NOTIFICATION_ADD', payload)
+    setTimeout(() => {
+      commit('NOTIFICATION_CLEAR')
+    }, 1000)
+  },
+
   updateGameStatus ({ commit }, status) {
     commit('GAME_UPDATE', {
       key: 'status',
@@ -258,7 +270,6 @@ export const actions = {
   },
 
   _takeCardFromDeck ({ commit, state, getters }, playerId) {
-    // dispatch
     commit('PLAYER_UPDATE', {
       player: playerId,
       key: 'cards',
@@ -314,11 +325,8 @@ export const actions = {
     })
 
     // add card on the table
-    commit('CARD_UPDATE', card)
     commit('TABLE_ADD', card)
 
-    // TODO: update game color here
-    // TODO: check game direction here
     dispatch('analyzeLastTableCard', payload.color)
 
     // update player hand
@@ -351,12 +359,59 @@ export const actions = {
 
   makeMove ({ commit, dispatch, state }, payload) {
     const card = state.players[payload.player].cards.find(i => i.id === payload.cardId)
-    if (card.color === 'black' && !payload.color) {
-      commit('COLORPICKER_CARD_UPDATE', card.id)
-      dispatch('openModal', 'color_picker')
-    } else {
-      dispatch('_makeMove', payload)
-    }
+    console.log('card', card)
+    dispatch('animateCard', card).then(() => {
+      if (card.color === 'black' && !payload.color) {
+        commit('COLORPICKER_CARD_UPDATE', card.id)
+        dispatch('openModal', 'color_picker')
+      } else {
+        dispatch('_makeMove', payload)
+      }
+    })
+  },
+
+  animateCard ({ commit }, card) {
+    return new Promise((resolve, reject) => {
+      commit('CARD_UPDATE', card)
+      const el = document.querySelector(`[data-card="${card.id}"]`)
+      const initial = el.getBoundingClientRect()
+
+      // el.classList.add('animated')
+      el.style.position = 'fixed'
+      el.style.top = `${initial.top}px`
+      el.style.left = `${initial.left}px`
+
+      console.log('------')
+      console.log('el', el)
+      console.log('initial.top', initial.top)
+      console.log('initial.left', initial.left)
+      console.log('factical.top', el.getBoundingClientRect().top)
+      console.log('factical.left', el.getBoundingClientRect().left)
+      console.log('card._position.top', card._position.top)
+      console.log('card._position.left', card._position.left)
+
+      // el.style.top = `${card._position.top}`
+      // el.style.left = `${card._position.left}`
+      // el.style.transform = `rotate(${card._position.angle})`
+
+      setTimeout(() => {
+        el.dataset.animation = 'true'
+        el.style.top = `${card._position.top}`
+        el.style.left = `${card._position.left}`
+        el.style.transform = `rotate(${card._position.angle})`
+      }, 0)
+      // el.style.top = `${card._position.top}`
+      // el.style.left = `${card._position.left}`
+      // el.style.transform = `rotate(${card._position.angle})`
+
+      // commit('CARD_UPDATE', card)
+      setTimeout(() => {
+        // el.classList.remove('animated')
+        el.dataset.animation = 'false'
+        el.style.position = ''
+        resolve()
+      }, 500)
+    })
   },
 
   updateUserActiveCard ({ commit }, activeCards) {
@@ -379,8 +434,8 @@ export const actions = {
 export const mutations = {
   CARD_UPDATE (state, card) {
     card._position = {
-      top: `${Math.floor(Math.random() * (30 - 15 + 1)) + 15}%`,
-      left: `${Math.floor(Math.random() * (50 - 30 + 1)) + 30}%`,
+      top: `${Math.floor(Math.random() * (40 - 34 + 1)) + 34}%`,
+      left: `${Math.floor(Math.random() * (50 - 42 + 1)) + 42}%`,
       angle: `${Math.floor(Math.random() * (60 + 60 + 1)) - 60}deg`
     }
   },
@@ -424,6 +479,13 @@ export const mutations = {
   },
   LOG_CLEAR (state) {
     state.logs = []
+  },
+
+  NOTIFICATION_ADD (state, notification) {
+    state.notification = notification
+  },
+  NOTIFICATION_CLEAR (state) {
+    state.notification = null
   },
 
   GAME_UPDATE (state, payload) {

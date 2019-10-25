@@ -14,11 +14,13 @@
 <script>
 import { mapState } from 'vuex'
 import vModal from '@/components/modals/modal'
+import vButton from '@/components/button'
 
 export default {
   name: 'finish-modal-component',
   components: {
-    vModal
+    vModal,
+    vButton
   },
   computed: {
     ...mapState({

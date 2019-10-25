@@ -71,7 +71,7 @@ export default {
         left: 0;
         width: 100%;
         height: 100%;
-        background: url('/color-picker.svg') no-repeat;
+        background: url('/uno/color-picker.svg') no-repeat;
         background-position: inherit;
         background-size: auto 270px;
       }
@@ -104,7 +104,7 @@ export default {
         transform: translate(-50%, -50%) scale(0);
         // transform: translate(-50%, -50%);
         transition: $transition-default;
-        background: url('/check.svg') no-repeat;
+        background: url('/uno/check.svg') no-repeat;
       }
       &:hover {
         &:after {

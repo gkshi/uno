@@ -1,14 +1,18 @@
 const pkg = require('./package')
 
 module.exports = {
-  mode: 'spa',
+  mode: 'universal',
 
-  server: {
-    port: 3030
+  // server: {
+  //   port: 3030
+  // },
+
+  router: {
+    base: '/uno/'
   },
 
   env: {
-    isDev: true
+    isDev: false
   },
 
   /*
@@ -54,6 +58,7 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    '@/plugins/i18n'
   ],
 
   /*

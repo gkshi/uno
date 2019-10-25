@@ -15,6 +15,7 @@
             option(value="wild") wild
             option(value="draw_two") draw_two
             option(value="skip") skip
+            option(value="number") number
         div
           span card color:
           select(ref="deal_color")
@@ -22,6 +23,12 @@
             option(value="green") green
             option(value="yellow") yellow
             option(value="blue") blue
+        div
+          span value:
+          select(ref="deal_number")
+            option(:value="null") null
+            option(:value="0") 0
+            option(v-for="i in 9" :value="i") {{ i }}
         .flex
           vButton(@click="dealCard") Deal
 </template>
@@ -48,9 +55,10 @@ export default {
   methods: {
     dealCard () {
       const card = {
-        id: Math.random().toFixed(7).slice(2),
+        id: +Math.random().toFixed(7).slice(2),
         type: this.$refs.deal_type.value,
         color: this.$refs.deal_type.value === 'wild_draw_four' || this.$refs.deal_type.value === 'wild' ? 'black' : this.$refs.deal_color.value,
+        value: this.$refs.deal_number.value,
         _position: null
       }
       const deck = [ ...this.$store.state.deck ]

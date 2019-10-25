@@ -5,6 +5,7 @@
     .deck.flex(ref="deck")
       gameCard(
         v-for="card in deck"
+        :id="card.id"
         :color="card.color"
         :type="card.type"
         :value="card.value"
@@ -41,7 +42,7 @@ export default {
       return this.activePlayer === 'user'
     },
     showButton () {
-      return this.isUserActive && this.userActiveCards < 1
+      return this.isUserActive && this.player('user').cards.length && this.userActiveCards < 1
     },
     userActiveCards () {
       return this.player('user').activeCards

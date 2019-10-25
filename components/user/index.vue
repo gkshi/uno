@@ -3,6 +3,7 @@
     .user-hand.cards.flex.center(ref="hand")
       card.card(
         v-for="card in user.cards"
+        :id="card.id"
         :type="card.type"
         :color="card.color"
         :value="card.value"
