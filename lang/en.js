@@ -4,8 +4,8 @@ const initialLang = {
   locale_en: 'English',
 
   you: 'You',
-  turn_start: 'Ход игрока <strong>{player}</strong>',
-  turn_finish: 'Игрок <strong>{player}</strong> ходит картой <strong class="{color}">{card} {color}</strong>'
+  turn_start: 'It\'s turn of player <strong>{player}</strong>',
+  turn_finish: '<strong>{player}</strong> moves <strong class="{color}">{card} {color}</strong>'
 }
 
 export default initialLang

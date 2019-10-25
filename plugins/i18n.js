@@ -3,8 +3,8 @@ import config from '@/app.config'
 import lang from '@/lang'
 
 const COOKIE_KEY = 'uno_locale'
-const DEFAULT_LOCALE = 'ru'
-const FALLBACK_LOCALE = 'ru'
+const DEFAULT_LOCALE = 'en'
+const FALLBACK_LOCALE = 'en'
 
 /**
  * Метод получения перевода строки

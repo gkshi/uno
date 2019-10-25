@@ -5,7 +5,7 @@
 
     template(v-else-if="gameStatus === 'ready'")
       div
-        vButton(color="blue" @click="startGame") Играть
+        vButton(color="blue" @click="startGame") Play
 
     template(v-else)
       .relative.flex.center

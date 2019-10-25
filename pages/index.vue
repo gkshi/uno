@@ -9,7 +9,9 @@
           gamePlayer(:data="players.bot1")
         .cell.flex.j-end.right
           div
-            a(href="#" @click.prevent="restart") Заново
+            a(href="#" @click.prevent="restart") Restart
+            a.github(href="https://github.com/gkshi/uno" target="_blank") Github
+            a.more-projects(href="https://gkshi.github.io/" target="_blank") More projects
             template(v-if="isDev")
               span &nbsp;
               a(href="#" @click.prevent="openModal('deal_card')") Deal card
@@ -159,6 +161,11 @@ $padding: 3%;
     &:hover {
       margin-left: 42px;
     }
+  }
+  .github,
+  .more-projects {
+    margin-left: 20px;
+    font-weight: $font-weight-bold;
   }
 }
 </style>

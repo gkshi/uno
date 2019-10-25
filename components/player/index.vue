@@ -10,7 +10,7 @@
         card.card(
           v-for="card in hand"
           :id="card.id"
-          :hidden="false"
+          :hidden="true"
           size="small"
           :type="card.type"
           :color="card.color"
@@ -107,7 +107,7 @@ export default {
       return colors[Math.floor(Math.random() * 4)]
     },
     think () {
-      const timeToThink = /* process.env.isDev ? 500 : */Math.floor(Math.random() * (3000 - 500 + 1)) + 500
+      const timeToThink = process.env.isDev ? 500 : Math.floor(Math.random() * (3000 - 500 + 1)) + 500
       this.timeout = setTimeout(() => {
         this.makeMove()
       }, timeToThink)

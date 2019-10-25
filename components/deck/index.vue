@@ -1,7 +1,7 @@
 <template lang="pug">
   .deck-component.flex.a-end(:class="{ 'no-pointer-events': !isUserActive }")
     .action.flex.a-center(:class="{ 'show': showButton }")
-      vButton(@click="takeCard") Взять
+      vButton(@click="takeCard") Take
     .deck.flex(ref="deck")
       gameCard(
         v-for="card in deck"
