@@ -24,7 +24,9 @@ module.exports = {
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: pkg.description }
+      { hid: 'description', name: 'description', content: pkg.description },
+      { name: 'Designer', content: 'George Shinkarev' },
+      { name: 'author', content: 'George Shinkarev' }
     ],
     link: [
       { rel: 'icon', type: 'image/vnd.microsoft.icon', size: '16x16 32x32 48x48 64x64', href: './favicon.png' },
