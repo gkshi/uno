@@ -171,7 +171,7 @@ export default {
             top: 0;
             left: 0;
             z-index: 0;
-            background: url('/uno/card.svg') no-repeat center;
+            background: url('~assets/img/card.svg') no-repeat center;
             background-size: cover;
             display: block;
             width: 100%;

@@ -31,7 +31,7 @@ export default {
     width: 100%;
     height: 100%;
     z-index: -1;
-    background: url('/uno/bg.png') no-repeat center;
+    background: url('~assets/img/bg.jpg') no-repeat center;
     background-size: cover;
   }
 </style>

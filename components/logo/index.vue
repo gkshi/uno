@@ -13,7 +13,7 @@ export default {
     width: 100px;
     height: 100px;
     user-select: none;
-    background: url('/uno/logo.svg') no-repeat center;
+    background: url('~assets/img/logo.svg') no-repeat center;
     background-size: contain;
   }
 </style>

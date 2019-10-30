@@ -1,5 +1,5 @@
 <template lang="pug">
-  img.icon-wild(src="/uno/wild.svg")
+  img.icon-wild(src="~assets/img/wild.svg")
 </template>
 
 <script>

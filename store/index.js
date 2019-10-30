@@ -60,7 +60,7 @@ export const state = () => ({
       id: 'bot1',
       type: 'bot',
       name: 'Jack',
-      photo: '/uno/users/jack.png',
+      photo: './users/jack.png',
       cards: [],
       _lastCard: null,
       el: null
@@ -69,7 +69,7 @@ export const state = () => ({
       id: 'bot2',
       type: 'bot',
       name: 'Sasha',
-      photo: '/uno/users/sasha.png',
+      photo: './users/sasha.png',
       cards: [],
       _lastCard: null,
       el: null
@@ -86,7 +86,7 @@ export const state = () => ({
       id: 'bot3',
       type: 'bot',
       name: 'Mary',
-      photo: '/uno/users/mary.png',
+      photo: './users/mary.png',
       cards: [],
       _lastCard: null,
       el: null

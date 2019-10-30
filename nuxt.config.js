@@ -1,14 +1,15 @@
 const pkg = require('./package')
 
 module.exports = {
-  mode: 'universal',
+  mode: 'spa',
 
   // server: {
   //   port: 3030
   // },
 
   router: {
-    base: '/uno/'
+    mode: 'hash'
+    // base: process.env.NODE_ENV === 'production' ? '/projects/uno' : '/'
   },
 
   env: {
@@ -26,7 +27,7 @@ module.exports = {
       { hid: 'description', name: 'description', content: pkg.description }
     ],
     link: [
-      { rel: 'icon', type: 'image/vnd.microsoft.icon', size: '16x16 32x32 48x48 64x64', href: '/favicon.png' },
+      { rel: 'icon', type: 'image/vnd.microsoft.icon', size: '16x16 32x32 48x48 64x64', href: './favicon.png' },
       { rel: 'stylesheet', type: 'text/css', href: 'https://fonts.googleapis.com/css?family=Fugaz+One' }
     ]
   },
@@ -69,6 +70,10 @@ module.exports = {
     ** You can extend webpack config here
     */
     extend (config, ctx) {
+      if (!ctx.isDev) {
+        // relative links, please.
+        config.output.publicPath = './_nuxt/'
+      }
       // Run ESLint on save
       if (ctx.isDev && ctx.isClient) {
         config.module.rules.push({
@@ -78,6 +83,7 @@ module.exports = {
           exclude: /(node_modules)/
         })
       }
+      return config
     }
   }
 }

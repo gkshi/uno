@@ -6,7 +6,7 @@
 
 ### Interface v1.1
 
-![](http://gkshi.ucoz.net/uno/uno_gametable.png)
+![](http://gkshi.ucoz.net/uno_gametable.png)
 
 &nbsp;
 
