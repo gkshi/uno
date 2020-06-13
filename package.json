@@ -33,6 +33,7 @@
     "nodemon": "^1.18.9",
     "pug": "^2.0.3",
     "pug-plain-loader": "^1.0.0",
-    "sass-loader": "^7.1.0"
+    "sass-loader": "^7.1.0",
+    "vue-yandex-metrika": "^1.8.3"
   }
 }
